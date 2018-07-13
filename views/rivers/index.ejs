@@ -1,0 +1,36 @@
+<% include ../partials/header %>
+
+<div class="container">
+
+    <header class="jumbotron">
+        <h1>River Journal</h1>
+        <p>Intro Text</p>
+        <p>
+    
+            <a class="btn btn-primary btn-lg" href="/rivers/new">Add New River</a>
+        </p>        
+    </header>
+
+    <div class="row text-center" style="display:flex; flex-wrap: wrap">
+               <% rivers.forEach(function(river){ %>
+            <div class="col-md-3 col-sm-6">
+                <div class="thumbnail">
+                
+                <div class="caption">
+                    <h4><%= river.name %></h4>   
+                    <h4><%= river.location %></h4>
+                </div> 
+                <p><%= river.description %></p>
+                <a href="/rivers/<%= river._id %>" class="btn btn-primary">More Info</a>
+                </div>
+                
+            </div>
+             
+        
+        <% }); %>
+
+                
+    </div>
+</div>
+
+<% include ../partials/footer %>
