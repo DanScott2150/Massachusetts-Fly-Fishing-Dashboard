@@ -4,15 +4,19 @@ var express     = require('express'),
     app         = express(),
     bodyParser  = require('body-parser'),
     mongoose    = require("mongoose"),
+    // fetch       = require('node-fetch'),
+    // findWeather       = require("./darksky.js"),            //Needed for DarkSky API calls
     Section     = require("./models/section"),
-    River       = require("./models/river"); 
+    River       = require("./models/river"), 
+    middleware  = require("./middleware");
     
 mongoose.connect("mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
     
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
-// app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/public"));
 
+// findWeather();
 
 //Method Override included to support HTTP put & delete methods  
 var methodOverride = require("method-override");
@@ -59,13 +63,13 @@ app.post("/rivers", function(req, res){
 });
 
 //SHOW route
-app.get("/rivers/:id", function(req, res){
+app.get("/rivers/:id", middleware.findWeather, function(req, res){
     //find river with the provided ID
     River.findById(req.params.id).exec(function(err, currentRiver){
         if(err){
             console.log(err);
         } else {
-            res.render("rivers/show", {river: currentRiver});
+            res.render("rivers/show", {river: currentRiver, weather: req.currentTemp});
         }
     });
 });

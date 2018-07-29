@@ -11,19 +11,23 @@
         {
             name: "Swift River",
             location: "Belchertown, MA",
+            lat: 42.2770,
+            lng: 72.4009,
             description: "Quabbin tailwater. Y Pool, Rt.9 Bridge, Cady Lane, etc.",
             sections: [
                 {
-                    name: "Y Pool"
+                    name: "Y-Pool"
                 },
                 {
-                    name: "Cady Lane"
+                    name: "Cady-Lane"
                 }
             ]
         },
         {
             name: "Millers River",
             location: "Athol, MA",
+            lat: 42.5959,
+            lng: 72.2267,
             description: "Erving, Wendell Depot, Bearsden, etc.",
             sections: [
                 {

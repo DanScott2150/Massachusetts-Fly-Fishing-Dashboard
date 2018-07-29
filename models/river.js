@@ -11,6 +11,8 @@ var riverSchema = new mongoose.Schema({
     name: String,
     sections: [sectionSchema],
     location: String,
+    lat: Number,
+    lng: Number,
     description: String,
     
     // lat: Number,
