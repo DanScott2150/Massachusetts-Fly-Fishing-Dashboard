@@ -7,8 +7,12 @@ var express     = require('express'),
     // fetch       = require('node-fetch'),
     // findWeather       = require("./darksky.js"),            //Needed for DarkSky API calls
     Section     = require("./models/section"),
-    River       = require("./models/river"), 
+    River       = require("./models/river"),
+    Comment     = require("./models/comment"),
     middleware  = require("./middleware");
+    
+// var commentRoutes = require("./routes/comments");
+// app.use("/rivers/:id/comments", commentRoutes);
     
 mongoose.connect("mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
     
@@ -45,6 +49,7 @@ app.get("/rivers/new", function(req, res){
     res.render("rivers/new");
 });
 
+
 //CREATE route
 app.post("/rivers", function(req, res){
     //Data pulled from form on NEW route: views/new.ejs
@@ -62,14 +67,16 @@ app.post("/rivers", function(req, res){
     });
 });
 
+
+
 //SHOW route
 app.get("/rivers/:id", middleware.findWeather, function(req, res){
     //find river with the provided ID
-    River.findById(req.params.id).exec(function(err, currentRiver){
+    River.findById(req.params.id).populate("comments").exec(function(err, currentRiver){
         if(err){
             console.log(err);
         } else {
-            res.render("rivers/show", {river: currentRiver, weather: req.currentTemp});
+            res.render("rivers/show", {river: currentRiver, weather: res.locals.weatherData});
         }
     });
 });
@@ -147,6 +154,41 @@ app.post("/rivers/:id/sections", function(req, res){
     });
 });
 
+
+//COMMENT ROUTES
+
+//NEW
+app.get("/rivers/:id/comments/new", function(req, res){
+    River.findById(req.params.id, function(err, foundRiver){
+        if(err){console.log(err);}
+        else{
+            res.render("comments/new", {river: foundRiver});
+        }
+    });
+});
+
+//Comment Create
+app.post("/rivers/:id/comments", function(req, res){
+    //find river using ID
+    River.findById(req.params.id, function(err, currentRiver){
+        if(err){
+            console.log(err);
+            res.redirect("/rivers");
+        } else {
+            Comment.create(req.body.comment, function(err, comment){
+                if(err){console.log(err);}
+                else {
+                    //To-do, add username support
+                    comment.save();
+                    currentRiver.comments.push(comment);
+                    currentRiver.save();
+                    res.redirect("/rivers/" + currentRiver._id);
+                }
+            });
+        }
+        
+    });
+});
 
 
 //Launch server

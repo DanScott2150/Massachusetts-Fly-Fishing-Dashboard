@@ -1,4 +1,7 @@
-var fetch = require("node-fetch");
+// var fetch = require("node-fetch");       //Using axios instead, can uninstall and remove from package.json?
+var express     = require('express'),
+    app         = express();
+var axios = require("axios");
 var River = require("../models/river");
 
 var middlewareObj = {};
@@ -6,64 +9,57 @@ var middlewareObj = {};
 middlewareObj.findWeather = function(req, res, next){
 /* Makes API call to DarkSky to pull weather data */
 
-var lat;
+var currentLat;
+var currentLng;
+var darkSkyKey = "8ae9a024254e2edf00f42c2dc694a34c";
 
-    //Find river we need   
-   River.findById(req.params.id, function(err, foundRiver){
-       if(err){
-           res.redirect("back");
-       } else {
-            //access the latitude value of river
-            // console.log(foundRiver.lat);
-            lat = foundRiver.lat;
-
-       }
-    });
-
-    
-    var darksky = 'https://api.darksky.net/forecast/';
-    var key = '8ae9a024254e2edf00f42c2dc694a34c';
-
-    // var lat = 42.5959;
-    var lng = -75.7584;
-    var uri = darksky + key + '/' + lat +','+ lng;
-
-    console.log("Lat: " + lat);
-            next();
-/*
-    uri = uri.concat('?units=ca&exclude=minutely,hourly&lang=ru');
-    
-    var options = {
-        method: 'GET',
-        mode: 'cors'
-    };
-
-
-    var darkSkyReq = new fetch.Request(uri, options);
-
-    fetch(darkSkyReq)
-        .then((response)=>{
-            if(response.ok){
-                return response.json();
-            }else{
-                throw new Error('Bad HTTP!');
+//Find current river
+var findLatLng = () => River.findById(req.params.id, 'lat lng', function(err, foundRiver){
+    if(err){console.log(err);}
+    else {
+        return new Promise((resolve, reject) => {
+            if(foundRiver){
+                // console.log("In Promise: " + foundRiver.lat);
+                resolve(foundRiver);
             }
-        })
-        .then( (j) =>{
-            // console.log(j.currently.temperature, j.currently.summary);
-            var currentTemp = j.currently.temperature;
-            req.currentTemp = currentTemp;
-            // console.log( j.daily.data[1] );
-            next();
-        })
-        .catch( (err) =>{
-            console.log('ERROR:', err.message);
         });
-*/
+        // console.log(foundRiver.lat);
+    }
+});
+
+findLatLng().then((response) => {
+    currentLat = response.lat;
+    currentLng = response.lng;
+    var weatherURL = `https://api.darksky.net/forecast/${darkSkyKey}/${currentLat},${currentLng}`;
+    // console.log(`Coordinates for API call: ${currentLat}, ${currentLng}`);
+    return axios.get(weatherURL);
+}).then((response) => {
+    var temperature = response.data.currently.temperature;
+    var summary = response.data.currently.summary;
+    // res.locals.currentTemp = temperature;
+    res.locals.weatherData = {
+        currentTemp: temperature,
+        currentSummary: summary
+    };
+    res.locals.currentTemp = temperature;
+    // app.use(function(req, res, next){
+    //     res.locals.currentTemp = temperature;
+        
+    // });
+    // console.log(res.data);
+    console.log(`The current temperature is: ${temperature}`);
+    next();
+});
+
+
+//Find lat & long of current river
+//For now, print to screen
+
+
+// next();
+
+
 };
 
-
 module.exports = middlewareObj;
-
-
 

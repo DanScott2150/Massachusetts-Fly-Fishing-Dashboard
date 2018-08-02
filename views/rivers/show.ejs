@@ -58,12 +58,31 @@
             <div class="thumbnail"  id="weather">
                 <!--<p><span id="temp"></span></p>-->
                 <!--<p><span id="wind"></span></p>-->
-                <p><b>Current Temperature:</b> <%= weather %></p>
+                <p><b>Current Temperature:</b><%= weather.currentTemp %></p>
+                <p><b><%= weather.currentSummary %></b></p>
+                <div>
+                    <ul><h4>Today's Weather</h4>
+                        <li>Current Temperature: <%= weather.currentTemp %></li>
+                        <li>Current Conditions: <%= weather.currentSummary %></li>
+                        <!--<li>Sunrise Time</li>-->
+                        <!--<li>Sunset Time</li>-->
+                        <!--<li>High Temp</li>-->
+                        <!--<li>Low Temp</li>-->
+                        <!--<li>Weather alerts</li>-->
+                    </ul>
+                </div>
             </div>
             
            
             <div class="thumbnail" id="map">
                 Map Div
+            </div>
+            
+            <div class="well">
+                <% river.comments.forEach(function(comment){ %>
+                    <p><strong><%= comment.author %></strong> - <%=comment.text %></p>
+                
+                <% }) %>
             </div>
             
             

@@ -10,6 +10,11 @@ var sectionSchema = new mongoose.Schema({
 var riverSchema = new mongoose.Schema({
     name: String,
     sections: [sectionSchema],
+    comments: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Comment"
+        }],
     location: String,
     lat: Number,
     lng: Number,
