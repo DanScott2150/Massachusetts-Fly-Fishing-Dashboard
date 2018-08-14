@@ -70,13 +70,13 @@ app.post("/rivers", function(req, res){
 
 
 //SHOW route
-app.get("/rivers/:id", middleware.findWeather, function(req, res){
+app.get("/rivers/:id", middleware.findWeather, middleware.usgsData, function(req, res){
     //find river with the provided ID
     River.findById(req.params.id).populate("comments").exec(function(err, currentRiver){
         if(err){
             console.log(err);
         } else {
-            res.render("rivers/show", {river: currentRiver, weather: res.locals.weatherData});
+            res.render("rivers/show", {river: currentRiver, weather: res.locals.weatherData, usgsData: res.locals.usgsData});
         }
     });
 });
@@ -190,7 +190,84 @@ app.post("/rivers/:id/comments", function(req, res){
     });
 });
 
+// const axios = require('axios');
+// axios.get('https://sheets.googleapis.com/v4/spreadsheets/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/values/All!A2:F15?key=AIzaSyABKltnRNvqBXDdqa-TdlNV4MGCuPLQZa0').then((response) => {
+//     console.log(response.data.values[0]);
+// });
 
+
+
+// var GoogleSpreadsheet = require('google-spreadsheet');
+
+// var doc = new GoogleSpreadsheet('1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ');
+// var sheet;
+
+// (function getInfoAndWorksheets() {
+//     doc.getInfo(function(err, info) {
+//       console.log('Loaded doc: '+info.title+' by '+info.author.email);
+//       sheet = info.worksheets[0];
+//     //   console.log(sheet);
+//     });
+
+//   })();
+  
+//  var fs = require('fs'); 
+// var readline = require('readline');
+// var {google} = require('googleapis');
+
+// var google = require('https://www.gstatic.com/charts/loader.js');
+// var {google} = require('googleapis');
+
+// var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/?key=AIzaSyABKltnRNvqBXDdqa-TdlNV4MGCuPLQZa0');
+    
+// query.setQuery('select dept, sum(salary) group by dept');
+// query.send(handleQueryResponse);
+
+// (function listRivers(){
+//     const sheets = google.sheets({version: 'v4'});
+//     sheets.spreadsheets.values.get({
+//         spreadsheetId: '1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ',
+//         range: 'All!A2:F15'
+//     }, (err, res) => {
+//         if(err){return console.log(err);}
+//         else {
+//             const rows = res.data.values;
+//             if(rows.length){
+//                 console.log('A, B:');
+//                 rows.map((row) => {
+//                     console.log(`${row[0]}, ${row[4]}`);
+//                 });
+//             }
+//         }
+//     });
+// })();
+
+  
+// (function getSpreadsheetRows(){
+//     doc.getRows(1, {offset: 1, limit: 20}, function(err, data){
+//         // var report = JSON.stringify(data);
+//         console.log(data);
+// // fs.writeFile('data.json', report);
+//     });
+// })();
+
+// (function getWorksheets(){
+//     doc.getInfo(function(err, info){
+//         sheet = info.worksheets[0];
+//     sheet.getCells({
+//         'min-row': 1,
+//         'max-row': 5,
+//         'return-empty': true
+//     }, function(err, cells){
+//         console.log(cells);
+//     });    
+        
+//     });
+// })();
+
+
+
+  
 //Launch server
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("Server Has Launched");

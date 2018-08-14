@@ -1,0 +1,174 @@
+<style>
+    #weather svg{
+  display: block;
+  outline: 1px solid blue;
+  width:100px;
+  max-width: 100%;
+  max-height:100px;
+  height: auto;    }
+</style>
+  <!--clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night--> 
+               
+<div class="col-md-7">
+    <h2>Current Weather</h2>
+        <div>
+            <% switch(weather.currently.icon){ 
+                case "clear-day":%>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#clear-day" />
+                    </svg>
+                <% break;
+                case "clear-night": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#clear-night" />
+                    </svg>
+                <% break;
+                case "rain": %>
+                    <svg>
+                        <use xlink:href="#rain" />
+                    </svg>
+                <% break;
+                case "snow": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#snow" />
+                    </svg>
+                <% break;
+                case "sleet": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#sleet" />
+                    </svg>
+                <% break;
+                case "wind": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#wind" />
+                    </svg>
+                <% break;
+                case "fog": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#fog" />
+                    </svg>
+                <% break;
+                case "partly-cloudy-day": %>
+                    <svg preserveAspectRatio="xMidYMid meet">
+                        <use xlink:href="#partly-cloudy-day" />
+                    </svg>
+                <% break;
+                case "partly-cloudy-night": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#partly-cloudy-night" />
+                    </svg>
+                <% break;
+                case "cloudy": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#cloudy" />
+                    </svg>
+                    
+                <% break;
+                case "cloudy": %>
+                    <svg width="100px" height="100px">
+                        <use xlink:href="#cloudy" />
+                    </svg>
+                <% break; } %>
+ 
+        </div> <!-- current weather icon -->
+                            
+        <p><strong>Current Temperature: </strong><%= Math.round(weather.currently.temperature) %>&#176F</p>
+        <p><%= weather.currently.summary %>. <%= weather.hourly.summary %></p>
+        <p><strong>High: </strong><%= Math.round(weather.daily.data[0].temperatureHigh) %>&#176F | 
+           <strong>Low: </strong><%= Math.round(weather.daily.data[0].temperatureLow) %>&#176F</p>
+
+        <p>
+            <!-- Quick fix: manually subtracting 14,400 (4 hours) times 1,000 (conv to milliseconds) from Date object to convert UTC to EST -->
+            <!-- Will only work if rivers in EST, and will break with daylight savings time, need to come up with better fix later -->
+            <!-- toLocaleString() function => options of hour:2-digit & minute:2-digit format the response to exclude seconds -->
+            <strong>Sunrise: </strong>
+                <%= new Date(weather.daily.data[0].sunriseTime * 1000 - 14400000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %> |
+            <strong>Sunset: </strong>
+                <%= new Date(weather.daily.data[0].sunsetTime * 1000 - 14400000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %>
+        </p>
+        
+</div> <!-- col-md-7 -->
+                        
+<div class="col-md-5">
+    <ul class="list-unstyled list-group">
+        <% for(var i=1; i<=5; i++) {%>
+        <% /* Begin var i at 1 weather.daily.data[0] is current day, and we want to begin with tomorrow */ %>
+            <li class="list-group-item">
+                <div style="display:inline-block; width: 70%;">
+                    <p>
+                        <!-- Print day name -->
+                        <% let weekday = new Date(weather.daily.data[i].time * 1000); %>
+                        <%= weekday.toLocaleDateString([], {weekday: 'long'}); %>: 
+                        H: <%= Math.round(weather.daily.data[i].temperatureHigh) %>&#176F / L: <%= Math.round(weather.daily.data[i].temperatureLow) %>&#176F
+                    </p>
+                    <p>
+                        <!-- Print daily summary -->
+                        <%= weather.daily.data[i].summary %>
+                    </p>
+                </div>
+                <div style="float: right;">
+                   <div style="height:40px; width: 40px; border:1px dotted #000">
+                      <% switch(weather.daily.data[i].icon){ 
+                            case "clear-day":%>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#clear-day" />
+                                </svg>
+                            <% break;
+                            case "clear-night": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#clear-night" />
+                                </svg>
+                            <% break;
+                            case "rain": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#rain" />
+                                </svg>
+                            <% break;
+                            case "snow": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#snow" />
+                                </svg>
+                            <% break;
+                            case "sleet": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#sleet" />
+                                </svg>
+                            <% break;
+                            case "wind": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#wind" />
+                                </svg>
+                            <% break;
+                            case "fog": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#fog" />
+                                </svg>
+                            <% break;
+                            case "partly-cloudy-day": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#partly-cloudy-day" />
+                                </svg>
+                            <% break;
+                            case "partly-cloudy-night": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#partly-cloudy-night" />
+                                </svg>
+                            <% break;
+                            case "cloudy": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#cloudy" />
+                                </svg>
+                            <% break;
+                            case "cloudy": %>
+                                <svg width="100px" height="100px">
+                                    <use xlink:href="#cloudy" />
+                                </svg>
+                            <% break;} %> 
+                    </div> <!-- icon -->
+                </div> <!-- float:right container div -->
+            </li>
+        <% } %> <!-- for loop to print 5-day forecast -->
+
+                                
+    </ul>
+</div> <!-- col-md-5 -->

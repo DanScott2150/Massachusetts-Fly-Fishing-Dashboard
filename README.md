@@ -70,10 +70,108 @@ Weather API:
         - Implement 5-day forecast. The API call response includes a week's worth of data, marked by
             UNIX timecodes. Need to look into how to convert that into Javascript/day of the week.
 
+===== 8.03 =====
+Weather functionality:
+    - Did some minor tinkering, mostly with the front-end of the weather app. Have it set up so that the
+        main part of the weather div shows current conditions, and then a sidebar that shows a brief
+        5-day forecast.
+    - Still to-do:
+        - Keep working on design. Right now it (kinda) works but looks like crap.
+        - Convert UNIX times to normal times. Both for sunrise/sunset on current weather, but also to
+            have it generate the names of the days of the week for the 5-day forecast.
+        - On that note, re-code the 5-day forecast within the show view so it loops through? Shouldn't
+            have to type the code out 5 times for each value in the 'daily' array.
+        - Implement icons. DarkSky docs link to a good icon free icon library.
+        - Round degrees to nearest number and add in degrees-symbol + F
+
+===== 8.04 =====
+Weather functionality:
+    - Successfully converted UNIX timestamp to human-readable. Ran into some issues getting it to then convert
+        from UTC time to local time. Right now I'm hard-coding '-14400000' into the Date function, to subtract
+        4 hours (14,400 seconds times 1,000 to convert to milliseconds, since JavaScript's Date object uses
+        time based on milliseconds). Definitely need to find a better way to do this, since not all Rivers will
+        be in EST. Also, daylight savings time. Minor issue for now, will re-visit later.
+    - Successfully rounded temperature degrees to nearest int and added degree-symbol (&#176) + F.
+    - Successfully changed the 5-day forecast to a for() loop. Cycles through JSON 'daily' items 1-5 
+        (since daily[0] is current day) and prints an LI along with the Day's name, High/Low temps, and Summary
+    - Still to do: Implement icons. DarkSky uses Skycons, which are open source. Not sure if I like the animations
+        though. Looking at Climacons too, which are static. Not sure how to pull them in & implement though. DarkSky
+        JSON data returns an 'icon' property for each day, with values like "sunny" "cloudy" "rain" etc. Maybe have
+        an array define these values and link them to specific icons?
+    - At this point, would it make sense to break the Weather functionality off into its own partials.ejs file?
+    - Semi-related, think I can uninstall node-fetch as a dependency? Original attempt at Weather API used it,
+        but now using axios instead.
+        
+===== 8.06 =====
+Weather functionality:
+    - Successfully implemented icons. Using "climacons" svg icons. Was not familiar with SVGs so spent some
+        time researching this morning. Currently have the library of SVG path's saved in the partials folder,
+        which then gets imported into the header partial. Built a switch/case statement into the show.ejs view,
+        to look at the 'icon' property returned in JSON API call, and match to the appropriate SVG path
+    - Still need to play around with the SVG styling. Dimensions & alignment still kinda weird. Can also
+        style for different colors, right now I just have them all as black.
+    - Need to iron out the look & feel. Right now the core functionality is good, but it doesn't look good
+
+===== 8.07 =====
+Weather functionality:
+        - Successfully split weather into it's own partials file. Cleaned up the River show.ejs considerably
+        - Going to put weather on the backburner for now. Core functionality works, will revisit later to
+                try and do more in terms of cleaning it up and making it look better
+
+USGS API:
+        - Shifting focus to USGS API. Goal is to have each River make an API call to the USGS data, and return
+                the River's current flow rate.
+        - Turned out to actually be pretty easy. Spent some time digging through the USGS API Docs. Data is
+            a bit clunky and there's a lot that gets returned, but for the most part pretty straightforward.
+        - Basically copied the Weather API Middleware function and changed the URL & variables to accomodate USGS
+        - Updated River schema to include 'USGS Site ID' field. Even though this value is a number, I had to format
+            its datatype as a String because the values commonly begin with a '0', which apparently causes problems
+            with Mongoose.
+        - Also found a way to pull in a graph (as an img) of the relevant data. Graph looks kinda ugly though,
+            might be worth looking into if it would be possible to pull the data points and then make a new
+            graph via SVG. Did a brief google search and it should definitely be possible, just a matter of
+            doing the legwork and figuring out how.
+        - Future project: Find a way for the User, when adding a new River, to lookup USGS site ID based on....
+            ... map coordinates? nearest town? will need to look into what's possible
+        - Also need to build out better error-handling. Not every fishing spot has an associated USGS gauge
+
+===== 8.14 =====
+Current Project: Trout Stocking data
+    - Ideally, each River shows data for when it was last stocked with trout. Each state presents this data differently on their respective websites, so might be a challenge.
+    - Starting with Mass: After digging around on their stocking site (https://www.mass.gov/service-details/trout-stocking-report) via DevTools "sources" tab, was able to find that the data was being pulled from a public Google Docs Spreadsheet.
+    - Tried making Axios request directly to spreadsheet. Almost worked, but it returns an object that contains both XML and JSON, and a lot of other unnecessary stuff? Seems like it would be impossible to filter out just the results I needed
+    - Tried Google Sheets API, but was having trouble finding the right way to filter rows based on specific criteria. i.e. on the River page for the Swift River, I only want to pull data rows where the name is equal to 'Swift River'. I'm sure it's possible? But I couldn't figure it out and was starting to go in circles reading the docs. (https://developers.google.com/sheets/api/)
+    - Going back to inspecting the Mass Trout website, it turns out they actually use the Google Charts API instead, and use it to output the data table.
+    - Copy/pasted most of their code, and tweaked it where needed. Was able to successfully filter results for the "Swift River" for basic proof-of-concept.
+    -- TO DO:
+        - Query value is currently hardcoded to "Swift River", need to change it to the River.name so it updates to whatever the current River is. In order to accomplish this I think I need to move the Charts API code into a middleware function, and access River.name that way? The Charts API is currently being included via a <script src></script> tag linking to an external file, so need to figure out how to convert that to a node require?
+    
+
+
+USGS API options: https://waterservices.usgs.gov/rest/
+- Daily Value API: Able to return statistical data (mean, max/min, stdev, etc) for date or time period
+- IV service: https://waterservices.usgs.gov/rest/IV-Service.html
+
+
+API URL:
+http://waterservices.usgs.gov/nwis/iv/?<arguments>
+
+Argument:
+&sites=#####    -       ID of specific site; https://water.usgs.gov/wsc/a_api/api_01wbd.html to find
+&format=json    -       Specifies data returned in JSON format    
+*for latest data, no date-related arguments needed
+&parameterCd=#,#,      - USGS parameter code of data to return. 00060 discharge c/fs, 00065 gage height, 00011 water temp F - https://help.waterdata.usgs.gov/code/parameter_cd_query?fmt=rdb&inline=true&group_cd=%
+
+
+
+
+
+
+Two API's - Site Service & Instantaneous Value. Site service doesn't offer JSON
+IV: 
+
 
  )
-    
-    
     
 ### DarkSky API ###
 Docs: https://darksky.net/dev/docs

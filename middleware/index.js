@@ -6,58 +6,81 @@ var River = require("../models/river");
 
 var middlewareObj = {};
 
+
+
 middlewareObj.findWeather = function(req, res, next){
 /* Makes API call to DarkSky to pull weather data */
-
-var currentLat;
-var currentLng;
-var darkSkyKey = "8ae9a024254e2edf00f42c2dc694a34c";
-
-//Find current river
-var findLatLng = () => River.findById(req.params.id, 'lat lng', function(err, foundRiver){
-    if(err){console.log(err);}
-    else {
-        return new Promise((resolve, reject) => {
-            if(foundRiver){
-                // console.log("In Promise: " + foundRiver.lat);
-                resolve(foundRiver);
-            }
-        });
-        // console.log(foundRiver.lat);
-    }
-});
-
-findLatLng().then((response) => {
-    currentLat = response.lat;
-    currentLng = response.lng;
-    var weatherURL = `https://api.darksky.net/forecast/${darkSkyKey}/${currentLat},${currentLng}`;
-    // console.log(`Coordinates for API call: ${currentLat}, ${currentLng}`);
-    return axios.get(weatherURL);
-}).then((response) => {
-    var temperature = response.data.currently.temperature;
-    var summary = response.data.currently.summary;
-    // res.locals.currentTemp = temperature;
-    res.locals.weatherData = {
-        currentTemp: temperature,
-        currentSummary: summary
-    };
-    res.locals.currentTemp = temperature;
-    // app.use(function(req, res, next){
-    //     res.locals.currentTemp = temperature;
+    var currentLat;
+    var currentLng;
+    var darkSkyKey = "8ae9a024254e2edf00f42c2dc694a34c";
+    
+    //Find current river
+    var findLatLng = () => 
+        //Find current river and return the lat & lng values
+        River.findById(req.params.id, 'lat lng', function(err, foundRiver){
+        if(err){console.log(err);}
+        else {
+            //Since this requires a call to the database, need to use Promises to deal with async issues
+            return new Promise((resolve, reject) => {
+                if(foundRiver){
+                    // console.log("In Promise: " + foundRiver.lat);
+                    resolve(foundRiver);
+                }
+            });
+        }
+    });
+    
+    findLatLng().then((response) => {
+        currentLat = response.lat;
+        currentLng = response.lng;
         
-    // });
-    // console.log(res.data);
-    console.log(`The current temperature is: ${temperature}`);
-    next();
-});
+        //Construct API call url
+        var weatherURL = `https://api.darksky.net/forecast/${darkSkyKey}/${currentLat},${currentLng}`;
+        // console.log(`Coordinates for API call: ${currentLat}, ${currentLng}`);
+        return axios.get(weatherURL);
+    }).then((response) => {
+        var fullData = response.data;
+            res.locals.weatherData = fullData;
+        next();
+    });
+
+};
 
 
-//Find lat & long of current river
-//For now, print to screen
 
-
-// next();
-
+middlewareObj.usgsData = function(req, res, next){
+/* Makes API call to USGS */
+    var currentID;
+    
+    //Find current river
+    var findCurrentID = () => 
+        //Find current river and return the usgs ID values
+        River.findById(req.params.id, 'usgsID', function(err, foundRiver){
+        if(err){console.log(err);}
+        else {
+            //Since this requires a call to the database, need to use Promises to deal with async issues
+            return new Promise((resolve, reject) => {
+                if(foundRiver){
+                    // console.log("In Promise: " + foundRiver);
+                    resolve(foundRiver);
+                }
+            });
+        }
+    });
+    
+    findCurrentID().then((response) => {
+        currentID = response.usgsID;
+        // console.log(currentID);
+        //Construct API call url
+        var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
+        return axios.get(usgsURL);
+    }).then((response) => {
+        var fullData = response.data;
+            res.locals.usgsData = fullData;
+        // console.log(fullData.value.timeSeries[0].variable.variableName);
+        // console.log(fullData.value.timeSeries[0].values[0].value[0].value);
+        next();
+    });
 
 };
 

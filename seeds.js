@@ -14,6 +14,7 @@
             location: "Belchertown, MA",
             lat: 42.2770,
             lng: -72.4009,
+            usgsID: "01175500",
             description: "Quabbin tailwater. Y Pool, Rt.9 Bridge, Cady Lane, etc.",
             sections: [
                 {
@@ -29,6 +30,7 @@
             location: "Athol, MA",
             lat: 42.5959,
             lng: -72.2267,
+            usgsID: "01166500",
             description: "Erving, Wendell Depot, Bearsden, etc.",
             sections: [
                 {
@@ -44,6 +46,7 @@
             location: "Millinocket, ME",
             lat: 45.6573,
             lng: -68.7098,
+            usgsID: "n/a",
             description: "Baxter State Park",
             sections: [
                 {
@@ -59,6 +62,7 @@
             location: "Yaak, MT",
             lat: 48.8330,
             lng: -115.7087,
+            usgsID: "12304500",
             description: "Montana",
             sections: [
                 {
