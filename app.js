@@ -1,5 +1,7 @@
 
 //App Init
+
+    require('dotenv').config();
 var express     = require('express'),
     app         = express(),
     bodyParser  = require('body-parser'),
@@ -10,6 +12,7 @@ var express     = require('express'),
     River       = require("./models/river"),
     Comment     = require("./models/comment"),
     middleware  = require("./middleware");
+
     
 // var commentRoutes = require("./routes/comments");
 // app.use("/rivers/:id/comments", commentRoutes);
@@ -191,7 +194,7 @@ app.post("/rivers/:id/comments", function(req, res){
 });
 
 // const axios = require('axios');
-// axios.get('https://sheets.googleapis.com/v4/spreadsheets/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/values/All!A2:F15?key=AIzaSyABKltnRNvqBXDdqa-TdlNV4MGCuPLQZa0').then((response) => {
+// axios.get(`https://sheets.googleapis.com/v4/spreadsheets/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/values/All!A2:F15?key=${process.env.GOOGLESHEETSAPIKEY}`).then((response) => {
 //     console.log(response.data.values[0]);
 // });
 
@@ -218,7 +221,7 @@ app.post("/rivers/:id/comments", function(req, res){
 // var google = require('https://www.gstatic.com/charts/loader.js');
 // var {google} = require('googleapis');
 
-// var query = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/?key=AIzaSyABKltnRNvqBXDdqa-TdlNV4MGCuPLQZa0');
+// var query = new google.visualization.Query(`https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/?key=${process.env.GOOGLESHEETSAPIKEY}`);
     
 // query.setQuery('select dept, sum(salary) group by dept');
 // query.send(handleQueryResponse);

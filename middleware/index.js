@@ -1,4 +1,5 @@
 // var fetch = require("node-fetch");       //Using axios instead, can uninstall and remove from package.json?
+    require('dotenv').config();
 var express     = require('express'),
     app         = express();
 var axios = require("axios");
@@ -12,7 +13,7 @@ middlewareObj.findWeather = function(req, res, next){
 /* Makes API call to DarkSky to pull weather data */
     var currentLat;
     var currentLng;
-    var darkSkyKey = "8ae9a024254e2edf00f42c2dc694a34c";
+    var darkSkyKey = process.env.DARKSKYAPIKEY;
     
     //Find current river
     var findLatLng = () => 
@@ -72,6 +73,7 @@ middlewareObj.usgsData = function(req, res, next){
         currentID = response.usgsID;
         // console.log(currentID);
         //Construct API call url
+        //No API key required for USGS data
         var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
         return axios.get(usgsURL);
     }).then((response) => {
