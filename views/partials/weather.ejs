@@ -12,64 +12,9 @@
 <div class="col-md-7">
     <h2>Current Weather</h2>
         <div>
-            <% switch(weather.currently.icon){ 
-                case "clear-day":%>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#clear-day" />
-                    </svg>
-                <% break;
-                case "clear-night": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#clear-night" />
-                    </svg>
-                <% break;
-                case "rain": %>
-                    <svg>
-                        <use xlink:href="#rain" />
-                    </svg>
-                <% break;
-                case "snow": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#snow" />
-                    </svg>
-                <% break;
-                case "sleet": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#sleet" />
-                    </svg>
-                <% break;
-                case "wind": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#wind" />
-                    </svg>
-                <% break;
-                case "fog": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#fog" />
-                    </svg>
-                <% break;
-                case "partly-cloudy-day": %>
-                    <svg preserveAspectRatio="xMidYMid meet">
-                        <use xlink:href="#partly-cloudy-day" />
-                    </svg>
-                <% break;
-                case "partly-cloudy-night": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#partly-cloudy-night" />
-                    </svg>
-                <% break;
-                case "cloudy": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#cloudy" />
-                    </svg>
-                    
-                <% break;
-                case "cloudy": %>
-                    <svg width="100px" height="100px">
-                        <use xlink:href="#cloudy" />
-                    </svg>
-                <% break; } %>
- 
+            <svg width="100px" height="100px">
+              <use xlink:href="#<%=weather.currently.icon%>" />
+            </svg>
         </div> <!-- current weather icon -->
                             
         <p><strong>Current Temperature: </strong><%= Math.round(weather.currently.temperature) %>&#176F</p>
@@ -107,63 +52,10 @@
                     </p>
                 </div>
                 <div style="float: right;">
-                   <div style="height:40px; width: 40px; border:1px dotted #000">
-                      <% switch(weather.daily.data[i].icon){ 
-                            case "clear-day":%>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#clear-day" />
-                                </svg>
-                            <% break;
-                            case "clear-night": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#clear-night" />
-                                </svg>
-                            <% break;
-                            case "rain": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#rain" />
-                                </svg>
-                            <% break;
-                            case "snow": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#snow" />
-                                </svg>
-                            <% break;
-                            case "sleet": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#sleet" />
-                                </svg>
-                            <% break;
-                            case "wind": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#wind" />
-                                </svg>
-                            <% break;
-                            case "fog": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#fog" />
-                                </svg>
-                            <% break;
-                            case "partly-cloudy-day": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#partly-cloudy-day" />
-                                </svg>
-                            <% break;
-                            case "partly-cloudy-night": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#partly-cloudy-night" />
-                                </svg>
-                            <% break;
-                            case "cloudy": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#cloudy" />
-                                </svg>
-                            <% break;
-                            case "cloudy": %>
-                                <svg width="100px" height="100px">
-                                    <use xlink:href="#cloudy" />
-                                </svg>
-                            <% break;} %> 
+                   <div style="height:40px; width: 40px; border:1px dotted #000;">
+                       <svg width="100px" height="100px">
+                            <use xlink:href="#<%=weather.daily.data[i].icon%>" />
+                        </svg>
                     </div> <!-- icon -->
                 </div> <!-- float:right container div -->
             </li>

@@ -13,6 +13,12 @@ var express     = require('express'),
     Comment     = require("./models/comment"),
     middleware  = require("./middleware");
 
+const axios = require('axios');
+
+axios.get('https://api.mapbox.com/v4/mapbox.mapbox-streets-v7/tilequery/-72.195,42.614.json?limit=5&access_token=pk.eyJ1IjoiZGFuc2NvdHQyMTUwIiwiYSI6ImNqa3d1dGRtMjAweTQzcW1tb2R1cmNsY3QifQ.J7IvUUi46-D3JkY6klKNDg')
+.then((response) => {
+    // console.log(response.data.features);
+});
     
 // var commentRoutes = require("./routes/comments");
 // app.use("/rivers/:id/comments", commentRoutes);
@@ -73,7 +79,7 @@ app.post("/rivers", function(req, res){
 
 
 //SHOW route
-app.get("/rivers/:id", middleware.findWeather, middleware.usgsData, function(req, res){
+app.get("/rivers/:id", middleware.findWeather, middleware.usgsData, middleware.troutStocking, function(req, res){
     //find river with the provided ID
     River.findById(req.params.id).populate("comments").exec(function(err, currentRiver){
         if(err){

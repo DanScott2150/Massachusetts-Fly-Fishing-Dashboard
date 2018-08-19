@@ -4,9 +4,33 @@ var express     = require('express'),
     app         = express();
 var axios = require("axios");
 var River = require("../models/river");
-
 var middlewareObj = {};
 
+// import {GoogleCharts} from 'google-charts';
+// 
+
+middlewareObj.troutStocking = function(req, res, next){
+//          google.charts.load('current', {'packages':['controls', 'table']});
+//      GoogleCharts.setOnLoadallback(drawTable);
+	  
+// 	function drawTable() {
+// 	    console.log("trout lookup");
+// 		var queryString = encodeURIComponent(`SELECT A, B, C, E, G WHERE B="Swift River"`);
+// 		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/gviz/tq?gid=0&headers=1&tq=' + queryString);
+		
+// 		fishquery.send(handleQueryResponse);
+// 	} 
+ 
+    // function handleQueryResponse(response) {
+    //     if (response.isError()) {
+    //         alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
+    //         return;
+    //     }
+
+
+  next();
+
+};
 
 
 middlewareObj.findWeather = function(req, res, next){

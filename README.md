@@ -146,6 +146,20 @@ Current Project: Trout Stocking data
     -- TO DO:
         - Query value is currently hardcoded to "Swift River", need to change it to the River.name so it updates to whatever the current River is. In order to accomplish this I think I need to move the Charts API code into a middleware function, and access River.name that way? The Charts API is currently being included via a <script src></script> tag linking to an external file, so need to figure out how to convert that to a node require?
     
+===== 8.15 =====
+Trout Stocking Functionality:
+    - Struggled with getting the trout stocking functionality to be dynamic. Figured out that the problem is that the River info is server-side, while the Google Charts function is client-side. Having trouble passing variables between the two. Found a npm package that integrates Google Charts onto server-side, think I'll need to dig into that, or at least look through the code and extract out the parts that I need? (https://www.npmjs.com/package/google-charts)
+    - Actually found a really easy fix. Within the script tag on the show view, pass in var theRiver = "<%=river.name%>". Basically pass a server-variable via EJS template strings into client-side JavaScript. This feels like a bad practice (bookmark: research this more), but it gets the job done for now.
+    -- TO DO:
+        - Look into if there are any limits on querying Google Spreadsheets, or better ways to go about this. Currently this works, but I have a couple reservations: 1) it takes a significant amount of time to load, sometimes as much as 5-10 seconds; and 2) what if the Mass DFW doesn't like me auto-scraping the data, or doesn't like me pinging it numerous times, and turns the sheet private? Might be better to set up a process where my app pulls the data once per day and stores it locally on the server, and then all River views pull from that dataset instead?
+
+===== 8.19 =====
+Weather Feature:
+    - Minor refactor: Cleaned up weather icon printing, now just a single <svg> tag with the reference set via EJS template strings. Previously, was doing a switch/case function that had every possible svg icon typed out, and then only displayed the one that matched the current icon data. Trimmed the 'weather.ejs' partial by about 100 lines!
+UI update:
+    - Updated River show view, changed sidebar to sticky, and now links to the sections within the page (weather/stocking/etc).
+    - To-do:
+        - Add a smooth-scroll for link clicks, make it so relevant sidebar link li highlights when user scrolls to that section. A lot of landingpage websites have this feature, shouldn't be too hard to figure out.
 
 
 USGS API options: https://waterservices.usgs.gov/rest/

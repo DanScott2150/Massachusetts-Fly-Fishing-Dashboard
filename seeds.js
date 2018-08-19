@@ -41,38 +41,24 @@
                 }
             ]
         },
-         {
-            name: "Wassataquoik Stream",
-            location: "Millinocket, ME",
-            lat: 45.6573,
-            lng: -68.7098,
-            usgsID: "n/a",
-            description: "Baxter State Park",
-            sections: [
-                {
-                    name: "Lean-to"
-                },
-                {
-                    name: "Grand Falls"
-                }
-            ]
-        },
         {
-            name: "Yaak",
-            location: "Yaak, MT",
-            lat: 48.8330,
-            lng: -115.7087,
-            usgsID: "12304500",
-            description: "Montana",
+            name: "Westfield River",
+            location: "Chesterfield, MA",
+            lat: 42.3918,
+            lng: -72.8398,
+            usgsID: "01183500",
+            description: "",
             sections: [
                 {
-                    name: "Section 1"
+                    name: "1"
                 },
                 {
-                    name: "Section 2"
+                    name: "2"
                 }
             ]
         }
+        
+
     ];
      
     function seedDB(){

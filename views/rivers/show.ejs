@@ -6,26 +6,41 @@
     .hidden{    
     display: none;
     }
+    
+    #sidebar-sticky{
+        /*height: 25vh;*/
+        position: sticky;
+        top: 5%;
+    }
 </style>
 
 <div class="container">
     <div class="row">
-        <div class="col-md-3">
-            <p class="lead">RiverJournal</p>
+        <div class="col-md-3" id="sidebar-sticky">
+            <p class="lead">River Dashboard</p>
             <div class="list-group">
-                <ul id="river-sections">
-                    <li class="list-group-item active">River Sections:</li>
+                <nav>
+                <ul id="river-menu">
+                    <li class="list-group-item active"><%=river.name%></li>
+                    
+                    <li class="list-group-item"><a href="#weather">Weather</a></li>
+                    <li class="list-group-item"><a href="#usgs">Flow Rates</a></li>
+                    <li class="list-group-item"><a href="#stocking">Stocking Report</a></li>
+                    <li class="list-group-item"><a href="#outings">Past Outings</a></li>
+                    <li class="list-group-item"><a href="#map">Map</a></li>
+
                     
                     <!-- Print out an LI for each river section -->
                     <!-- user can then click to toggle a display planel for that section -->
                     
-                    <% river.sections.forEach(function(section){ %>
-                        <li class="list-group-item" id="<%=section.name%>">
-                            <%= section.name %>
-                        </li>
-                    <% }); %>
+                    <% //river.sections.forEach(function(section){ %>
+                        <!--<li class="list-group-item" id="<%=//section.name%>">-->
+                            <%= //section.name %>
+                        <!--</li>-->
+                    <% //}); %>
                     
                 </ul>
+                </nav>
             </div> <!-- list-group -->
         </div>
         
@@ -39,36 +54,48 @@
                 </div>
             </div>
             
-<!-- Trout Stocking -->
-            <div class="thumbnail"  id="stocking">
-                <div class="container-fluid">
-                    <div class="row">
-                        <% include ../partials/stocking %> 
-                    </div>
-                </div>
-            </div>
-
-
-
-<!-- END trout stocking -->
-
-
 <!-- Weather -->
+<section id="weather">
             <div class="thumbnail"  id="weather">
+                <a name="#weather"></a>
                 <div class="container-fluid">
                     <div class="row">
                         <% include ../partials/weather %>    
                     </div>
                 </div>
             </div>
+</section>
 <!-- end Weather -->
 
-            
+<!-- USGS river flow data -->            
+<section id="usgs">
             <div class="thumbnail" id="usgs">
+                <a name="#usgs"></a>
+                <style>
+                    .thumbnail img{
+                        width: 576px;
+                    }
+                </style>
                 <p>USGS Data Location: <%= usgsData.value.timeSeries[0].sourceInfo.siteName %> | River ID: <%= river.usgsID %></p>
                 <p>Current Flow: <%= usgsData.value.timeSeries[0].values[0].value[0].value %></p>
-                <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060"  width="576" height="400" alt="USGS Water-data graph for site 06025500"  /> 
+                <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060"  width="288" height="200" alt="USGS Water-data graph for site 06025500"  /> 
             </div>
+</section>
+<!-- end of USGS -->
+
+
+<!-- Trout Stocking -->
+<section id="stocking">
+            <div class="thumbnail"  id="stocking">
+                <a name="#stocking"></a>
+                <div class="container-fluid">
+                    <div class="row">
+                        <% include ../partials/stocking %> 
+                    </div>
+                </div>
+            </div>
+</section>
+<!-- END trout stocking -->
                 
             
 <!--
@@ -95,15 +122,48 @@
             </div>
 
 
-
+<section id="outings">
             <div class="well">
-                <% river.comments.forEach(function(comment){ %>
-                    <p><strong><%= comment.author %></strong> - <%=comment.text %></p>
+                <a name="#outings"></a>
+                <h4>Past Outings</h4>
+                        <p>Coming soon: Past outings/journal</p>
+                        <p>Planned feature, user can</p>
+                        <ul>
+                            <li>Add, edit, delete entries that detail past outings on this river. Dates, section(s) fished, fishes caught, flies used, notes & observations, etc.</li>
+                        </ul>
+                <% //river.comments.forEach(function(comment){ %>
+                    <p><strong><%= //comment.author %></strong> - <%=//comment.text %></p>
                 
-                <% }) %>
+                <% //}) %>
             </div>
+</section>
             
             
+            <!-- Map -->
+            <style>
+                #map{
+                    height: 400px;
+                }
+            </style>
+<section id="map">
+            <div class="thumbnail"  id="map">
+                <a name="#map"></a>
+                <div class="container-fluid">
+                    <div class="row">
+                        <h4>Map</h4>
+                        <p>Coming soon: Map view</p>
+                        <p>Planned feature, user can customize map to:</p>
+                        <ul>
+                            <li>Mark specific fishing holes (i.e. Swift y-pool/cadylane/etc; Millers wendelldepot/bearsden/etc</li>
+                            <li>Mark parking/access spots?</li>
+                            <li>Mark trout stocking points? (think specific location data available somewhere via Mass DFW data)</li>
+                            <li>Mark nearby camping options?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+</section>
+<!-- END map -->
             
 
             <div class="well">
