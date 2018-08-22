@@ -81,7 +81,7 @@ middlewareObj.usgsData = function(req, res, next){
     var findCurrentID = () => 
         //Find current river and return the usgs ID values
         River.findById(req.params.id, 'usgsID', function(err, foundRiver){
-        if(err){console.log(err);}
+        if(err){console.log(err); next();}
         else {
             //Since this requires a call to the database, need to use Promises to deal with async issues
             return new Promise((resolve, reject) => {

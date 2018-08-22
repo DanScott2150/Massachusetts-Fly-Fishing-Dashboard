@@ -1,3 +1,17 @@
+.nav .active a{
+    color: inherit;
+}
+
+.hidden{    
+    display: none;
+}
+
+#sidebar-sticky{
+    height: 25vh;
+    position: sticky;
+    top: 5%;
+}
+
 .thumbnail img{
     width: 100%;
 }

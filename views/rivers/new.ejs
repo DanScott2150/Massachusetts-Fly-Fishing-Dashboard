@@ -3,128 +3,27 @@
 <div class="container">
     <div class="row">
 
-        <h1 style="text-align: center;">Create a new river</h1>
+        <h1 style="text-align: center;">Add a new river</h1>
         
         <div class="thumbnail" id="map" style="width:70%; height:600px; margin: 0 auto"></div>
-        <!--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHwdkHGOv55partXLb5M5A_-uY0opL8Qg&callback=initMap"></script>-->
-   
-   <script src='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.js'></script>
-<link href='https://api.mapbox.com/mapbox.js/v3.1.1/mapbox.css' rel='stylesheet' />
-   
-        <script>
-
-const mapBoxKey = 'pk.eyJ1IjoiZGFuc2NvdHQyMTUwIiwiYSI6ImNqa3d1dGRtMjAweTQzcW1tb2R1cmNsY3QifQ.J7IvUUi46-D3JkY6klKNDg';
-L.mapbox.accessToken = mapBoxKey;
-
-var map = L.mapbox.map('map', 'mapbox.outdoors')
-    .setView([42.4072, -72.0000], 8);
-    
-    
-// map.on('click', function(e) {
-// 	console.log(e);
-// });
-
-var layer = L.mapbox.tileLayer('mapbox.streets');
+        <script type="text/javascript" src="../js/mapbox-add.js"></script>
 
 
-// function initMap(){
-
-// Create map {ideally outline MA, but sounds like that's more trouble than it's worth
-// User click to add marker
-// => From marker, extract Lat/Lng
-// ==> Reverse Geocode to return River Name, Town
-
-
-  //Setup map options & default view to state of Massachusetts
-//   var options = {
-//     zoom: 8,
-//     center: {lat: 42.4072, lng: -72.0000},
-//     mapTypeId: 'terrain',
-//     streetViewControl: false
-//   }
-
-//   //Create new Google Map object, occupies div#map
-//   var map = new google.maps.Map(document.getElementById('map'), options);
-//     var geocoder = new google.maps.Geocoder;
-//     var infoWindow = new google.maps.InfoWindow;
-
-
-//     map.addListener('click', function(e){
-//         // userClick(e.latLng, map);
-//         var currentLatLng = e.latLng;
-//         geocodeLatLng(geocoder, map, infoWindow, currentLatLng);
-//     });
-    
-//     function userClick(currentLatLng, map){
-
-//         var marker = new google.maps.Marker({
-//             position: latLng,
-//             map: map,
-//             animation: google.maps.Animation.DROP
-//         });
-
-        
-            
-//         // var currentLat = latLng.lat();
-//         // var currentLng = latLng.lng();
-//         // console.log(toUrlValue(currentLat));
-//         // var innerContent = "<h4>Current Selection:</h4>" +
-//         //                     "<p><strong>Latitude:</strong>" + currentLat + "</p>" +
-//         //                     "<p><strong>Longitude:</strong>" + currentLng + "</p>";
-                            
-            
-        
-        
-//         // infoWindow.open(map, marker);
-        
-//         // marker.addListener('click', function(){
-//         //     console.log("Marker click");
-//         // });
-
-//         // var riverLatLng = new google.maps.LatLng(latLng);
-//         // console.log(riverLatLng);
-//     }
-
-
-// }
-
-//         function geocodeLatLng(geocoder, map, infoWindow, currentLatLng){
-//             geocoder.geocode({'location': currentLatLng}, function(results, status){
-//                 if(status === 'OK'){
-//                     if(results[0]){
-//                         map.setZoom(11);
-//                         var newMarker = new google.maps.Marker({
-//                             position: currentLatLng,
-//                             map: map
-//                         });
-//                         infoWindow.setContent(results[0].formatted_address);
-//                         infoWindow.open(map, newMarker);
-//                     } else {
-//                         console.log('No results found');
-//                     }
-//                 } else {
-//                     console.log("Geocoder failed with status: " + status);
-//                 }
-//             });
-//         }
-
-
-
-        </script>
-        
         <div style="width:30%; margin:25px auto">
 
 <!--
 Goal: Update so that new entries will be valid for all API calls
-Current limitation: restrict to only Mass Rivers
+Current limitation: restrict to only Mass Rivers [due to trout stocking info]
 
 Ideally: Map view, click on map to select river.
 - Auto-gens Name, Location, and finds nearest USGS dada point
 
--- Google API: Reverse Geocoding
+--MapBox API:
 1) User clicks point on map
-    1a) Check if point is water body: if not, error
-2) Return Name of river from Google, auto-fill into "River Name" field
+    a) If point has a 'waterbody-label' associated with it, auto-fill form with River Name & Lat/Lng
+    b) If not, but 'waterbody' in area, zoom in (thus showing more labels). Repeat until 1a satisfied
+    c) If no waterbody in area, alert user of error
+2) Return name of River and Lat/Lng
 3) Stocking reports: Checkbox list of all stocking points associated with that river.
     User selects as many as they want included
 4) Town: Auto-fill based on Google geocode
@@ -134,27 +33,43 @@ Aim to have each field auto-complete
 
 -->
         
-
-            <form action="/rivers" method="POST">
-                <div class="form-group">
-                    <input class="form-control" type="text" name="name" placeholder="name">
-                </div>
-                <div class="form-group">
-                    <input class="form-control" type="text" name="location" placeholder="location">
-                </div>
-                <div class="form-group">
-                    <input class="form-control" type="text" name="description" placeholder="description">
-                </div>
-                <div class="form-group">
-                    <button class="btn btn-lg btn-default btn-block btn-primary">Submit</button>
-                </div>
-                
-            </form>
+    
+        <form action="/rivers" method="POST">
+            <div class="form-group">
+                <input class="form-control" id="river-name" type="text" name="name" placeholder="name">
+            </div>
             
-            <a href="/rivers">Back to Rivers Page</a>
-        </div>
-        
+            <div class="form-group">
+                <input class="form-control" id="river-lat" type="text" name="lat" placeholder="latitude">
+            </div>
+            
+            <div class="form-group">
+                <input class="form-control" id="river-lng" type="text" name="lng" placeholder="longitude">
+            </div>
+            
+            <div class="form-group">
+                <input class="form-control" id= type="text" name="location" placeholder="location">
+            </div>
+            
+            <div class="form-group">
+                <input class="form-control" type="text" name="description" placeholder="description">
+            </div>
+            
+            <div class="form-group">
+                <input class="form-control" type="text" name="usgs" value="01175500"><!-- temp placeholder value -->
+            </div>
+            
+            <div class="form-group">
+                <button class="btn btn-lg btn-default btn-block btn-primary">Submit</button>
+            </div>
+            
+        </form>
+
+        <a href="/rivers">Back to Rivers Page</a>
+    
     </div>
+        
+</div>
 </div>
 
 <% include ../partials/footer %>

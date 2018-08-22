@@ -63,10 +63,13 @@ app.get("/rivers/new", function(req, res){
 app.post("/rivers", function(req, res){
     //Data pulled from form on NEW route: views/new.ejs
     var name = req.body.name;
+    var lat = req.body.lat;
+    var lng = req.body.lng;
     var location = req.body.location;
     var description = req.body.description;
+    var usgs = req.body.usgs;
 
-    var newRiver = {name:name, location: location, description: description};
+    var newRiver = {name:name, location:location, lat:lat, lng:lng, usgsID:usgs, description: description};
     River.create(newRiver, function(err, newlyCreated){
         if(err){
             console.log(err);

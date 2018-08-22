@@ -161,6 +161,18 @@ UI update:
     - To-do:
         - Add a smooth-scroll for link clicks, make it so relevant sidebar link li highlights when user scrolls to that section. A lot of landingpage websites have this feature, shouldn't be too hard to figure out.
 
+===== 8.21 =====
+Map for Add River feature:
+    - For 'Add River' route, successfully added a Map. User can click on a river on the map, and it will auto-fill the user's form with the River Name, Lat/Lng based on where the User clicked.
+    - Using MapBox API for this functionality. Originally started by using Google Maps. Ran into problem with Google in that it doesn't have great support for rivers, or waterbodies in general. Don't think it's possible to extract a river name based on where a user clicks? On top of that, it sounds like Google's new API pricing is driving a lot of developers away... maybe learning a different map API from the get-go will be better for me long-term anyways. Either way, kept the code I had written for GMaps API and saved it to public/js/gmaps.js, just in case.
+    - Downside of MapBox is that the doc's are confusing... laid out in a way that's not intuitive at all. Also I'm not thrilled with the look & feel, but I guess I can edit that in the MapBox studio? Something to look into more at a later date...
+    - To-do:
+        - Extract town name from user click, for River 'location'
+        - Find a way to search for nearest USGS data station based on lat/lng
+        - Maybe add some sort of filter for trout stocking reports? I.e. user clicks on Miller Rivers to add, and is given options 'Erving, Orange, Royalston, etc' for stocking reports to show on the show.ejs?
+        - Data validation & error testing
+    - Also, add Maps for show.ejs
+
 
 USGS API options: https://waterservices.usgs.gov/rest/
 - Daily Value API: Able to return statistical data (mean, max/min, stdev, etc) for date or time period
@@ -180,12 +192,6 @@ Argument:
 
 
 
-
-Two API's - Site Service & Instantaneous Value. Site service doesn't offer JSON
-IV: 
-
-
- )
     
 ### DarkSky API ###
 Docs: https://darksky.net/dev/docs

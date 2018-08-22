@@ -12,8 +12,8 @@
         {
             name: "Swift River",
             location: "Belchertown, MA",
-            lat: 42.2770,
-            lng: -72.4009,
+            lat: 42.271486,
+            lng: -72.3422424,
             usgsID: "01175500",
             description: "Quabbin tailwater. Y Pool, Rt.9 Bridge, Cady Lane, etc.",
             sections: [

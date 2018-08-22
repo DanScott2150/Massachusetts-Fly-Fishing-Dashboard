@@ -3,24 +3,19 @@
 <!-- style for displaying/hiding section info panels -->
 <!-- eventually move into main.css, but here now just for ease of testing -->
 <style>
-    .hidden{    
-    display: none;
-    }
-    
-    #sidebar-sticky{
-        /*height: 25vh;*/
-        position: sticky;
-        top: 5%;
-    }
+
 </style>
+
 
 <div class="container">
     <div class="row">
         <div class="col-md-3" id="sidebar-sticky">
             <p class="lead">River Dashboard</p>
-            <div class="list-group">
-                <nav>
-                <ul id="river-menu">
+            <div class="list-group" id="river-menu">
+                <!--<nav>-->
+                    <!--<div id="river-menu">-->
+                    <nav>
+                <ul class="nav" role="tablist">
                     <li class="list-group-item active"><%=river.name%></li>
                     
                     <li class="list-group-item"><a href="#weather">Weather</a></li>
@@ -40,6 +35,7 @@
                     <% //}); %>
                     
                 </ul>
+                <!--</div>-->
                 </nav>
             </div> <!-- list-group -->
         </div>
@@ -55,22 +51,20 @@
             </div>
             
 <!-- Weather -->
-<section id="weather">
+<!--<section id="weather" class="section">-->
             <div class="thumbnail"  id="weather">
-                <a name="#weather"></a>
                 <div class="container-fluid">
                     <div class="row">
                         <% include ../partials/weather %>    
                     </div>
                 </div>
             </div>
-</section>
+<!--</section>-->
 <!-- end Weather -->
 
 <!-- USGS river flow data -->            
-<section id="usgs">
+<!--<section id="usgs" class="section">-->
             <div class="thumbnail" id="usgs">
-                <a name="#usgs"></a>
                 <style>
                     .thumbnail img{
                         width: 576px;
@@ -80,14 +74,12 @@
                 <p>Current Flow: <%= usgsData.value.timeSeries[0].values[0].value[0].value %></p>
                 <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060"  width="288" height="200" alt="USGS Water-data graph for site 06025500"  /> 
             </div>
-</section>
+<!--</section>-->
 <!-- end of USGS -->
 
-
 <!-- Trout Stocking -->
-<section id="stocking">
+<section id="stocking" class="section">
             <div class="thumbnail"  id="stocking">
-                <a name="#stocking"></a>
                 <div class="container-fluid">
                     <div class="row">
                         <% include ../partials/stocking %> 
@@ -122,9 +114,8 @@
             </div>
 
 
-<section id="outings">
-            <div class="well">
-                <a name="#outings"></a>
+<section>
+            <div class="well section" id="outings">
                 <h4>Past Outings</h4>
                         <p>Coming soon: Past outings/journal</p>
                         <p>Planned feature, user can</p>
@@ -138,16 +129,52 @@
             </div>
 </section>
             
+        
             
-            <!-- Map -->
-            <style>
-                #map{
-                    height: 400px;
-                }
-            </style>
-<section id="map">
-            <div class="thumbnail"  id="map">
-                <a name="#map"></a>
+<div id='map' style='width: 100%; height: 500px;'></div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuc2NvdHQyMTUwIiwiYSI6ImNqa3d1dGRtMjAweTQzcW1tb2R1cmNsY3QifQ.J7IvUUi46-D3JkY6klKNDg';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9'
+});
+
+var map = new mapboxgl.Map({
+  container: 'map', // HTML container id
+  style: 'mapbox://styles/mapbox/outdoors-v10', // style URL
+  center: [-72.3422424, 42.271486], // starting position as [lng, lat]
+  zoom: 13,
+//   attributionControl: false
+});
+var nav = new mapboxgl.NavigationControl();
+map.addControl(nav, 'top-left');
+
+map.on('click', function(e){
+    
+// For accessing data on features >> River name is in here somewhere
+// Seems like name only pops up when 'name' label is clicked, but entire
+// river still shares an 'id'.
+// var features = map.queryRenderedFeatures(e.point);
+// console.log(JSON.stringify(features[0], null, 2));
+
+// console.log(features);
+   new mapboxgl.Marker()
+   .setLngLat(e.lngLat)
+   .addTo(map);
+});
+
+ var popup = new mapboxgl.Popup()
+    .setHTML('<h3>Reykjavik Roasters</h3><p>A good coffee shop</p>');
+    
+
+var marker = new mapboxgl.Marker()
+.setLngLat([-72.3422424, 42.271486])
+.setPopup(popup)
+.addTo(map);
+</script>
+            
+<!--<section id="map" class="section">-->
+            <div class="thumbnail">
                 <div class="container-fluid">
                     <div class="row">
                         <h4>Map</h4>
@@ -162,7 +189,7 @@
                     </div>
                 </div>
             </div>
-</section>
+<!--</section>-->
 <!-- END map -->
             
 
@@ -172,6 +199,7 @@
                     <button class="btn btn-danger">Delete</button>
                 </form>
             </div>
+            
             
 
             </div>
@@ -192,7 +220,5 @@
         $('#section-' + $id).removeClass('hidden');
     });
 </script>
-
-<!--<script src="/js/darksky.js"></script>-->
 
 <% include ../partials/footer %>
