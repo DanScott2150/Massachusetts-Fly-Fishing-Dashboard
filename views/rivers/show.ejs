@@ -132,46 +132,13 @@
         
             
 <div id='map' style='width: 100%; height: 500px;'></div>
+
 <script>
-mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuc2NvdHQyMTUwIiwiYSI6ImNqa3d1dGRtMjAweTQzcW1tb2R1cmNsY3QifQ.J7IvUUi46-D3JkY6klKNDg';
-var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v9'
-});
-
-var map = new mapboxgl.Map({
-  container: 'map', // HTML container id
-  style: 'mapbox://styles/mapbox/outdoors-v10', // style URL
-  center: [-72.3422424, 42.271486], // starting position as [lng, lat]
-  zoom: 13,
-//   attributionControl: false
-});
-var nav = new mapboxgl.NavigationControl();
-map.addControl(nav, 'top-left');
-
-map.on('click', function(e){
-    
-// For accessing data on features >> River name is in here somewhere
-// Seems like name only pops up when 'name' label is clicked, but entire
-// river still shares an 'id'.
-// var features = map.queryRenderedFeatures(e.point);
-// console.log(JSON.stringify(features[0], null, 2));
-
-// console.log(features);
-   new mapboxgl.Marker()
-   .setLngLat(e.lngLat)
-   .addTo(map);
-});
-
- var popup = new mapboxgl.Popup()
-    .setHTML('<h3>Reykjavik Roasters</h3><p>A good coffee shop</p>');
-    
-
-var marker = new mapboxgl.Marker()
-.setLngLat([-72.3422424, 42.271486])
-.setPopup(popup)
-.addTo(map);
+    //pass river lat/lng from server-side to client-side
+    var mapCenter = [<%=river.lng%>, <%=river.lat%>];
 </script>
+
+<script type="text/javascript" src="../js/mapbox-show.js"></script>
             
 <!--<section id="map" class="section">-->
             <div class="thumbnail">
@@ -210,6 +177,8 @@ var marker = new mapboxgl.Marker()
 <script>
 //JQUERY functionality that allows user to select & view info for a given section
 //Current problem: only works if section's 'name' property contains no spaces
+
+/*
     $("#river-sections li").on("click", function(e){
 
         $this = $(this);
@@ -219,6 +188,7 @@ var marker = new mapboxgl.Marker()
         $('div[id^=section]').not($class).addClass('hidden');
         $('#section-' + $id).removeClass('hidden');
     });
+*/
 </script>
 
 <% include ../partials/footer %>

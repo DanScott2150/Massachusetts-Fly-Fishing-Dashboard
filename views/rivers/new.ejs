@@ -1,15 +1,50 @@
 <% include ../partials/header %>
 
+
 <div class="container">
     <div class="row">
-
-        <h1 style="text-align: center;">Add a new river</h1>
         
-        <div class="thumbnail" id="map" style="width:70%; height:600px; margin: 0 auto"></div>
-        <script type="text/javascript" src="../js/mapbox-add.js"></script>
+        <div class="thumbnail">
+            <div class="caption-full">
+                <h2 style="text-align: center;">Add a new river</h2>
+            </div>
+        </div>
+        
+        <div class="col-md-3" id="sidebar-sticky">
+    
+            <p class="lead">Add New River</p>
 
+                <form action="/rivers" method="POST">
+                    <div class="form-group">
+                        <input class="form-control" id="river-name" type="text" name="name" placeholder="name">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" id="river-lat" type="text" name="lat" placeholder="latitude">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" id="river-lng" type="text" name="lng" placeholder="longitude">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" id= type="text" name="location" placeholder="location">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="description" placeholder="description">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="text" name="usgs" value="01175500"><!-- temp placeholder value -->
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-lg btn-default btn-block btn-primary">Submit</button>
+                    </div>
+                </form>
 
-        <div style="width:30%; margin:25px auto">
+        </div> <!-- col-md-3 sidebar-sticky -->
+        
+        <div class="col-md-9">
+        
+            <div class="thumbnail" id="map" style="width:100%; height:400px; margin: 0 auto"></div>
+            <script type="text/javascript" src="../js/mapbox-add.js"></script>
+
 
 <!--
 Goal: Update so that new entries will be valid for all API calls
@@ -34,41 +69,21 @@ Aim to have each field auto-complete
 -->
         
     
-        <form action="/rivers" method="POST">
-            <div class="form-group">
-                <input class="form-control" id="river-name" type="text" name="name" placeholder="name">
-            </div>
-            
-            <div class="form-group">
-                <input class="form-control" id="river-lat" type="text" name="lat" placeholder="latitude">
-            </div>
-            
-            <div class="form-group">
-                <input class="form-control" id="river-lng" type="text" name="lng" placeholder="longitude">
-            </div>
-            
-            <div class="form-group">
-                <input class="form-control" id= type="text" name="location" placeholder="location">
-            </div>
-            
-            <div class="form-group">
-                <input class="form-control" type="text" name="description" placeholder="description">
-            </div>
-            
-            <div class="form-group">
-                <input class="form-control" type="text" name="usgs" value="01175500"><!-- temp placeholder value -->
-            </div>
-            
-            <div class="form-group">
-                <button class="btn btn-lg btn-default btn-block btn-primary">Submit</button>
-            </div>
-            
-        </form>
+<h3>1)Select River on Map Above to auto-generate River name, Latitude, Longitude</h3>
+    <p>For now: if a click doesn't register, zoom in until the river's name is visible on the map and click on that.</p>
+    <p>Will iron out this functionality better later.</p>
 
+<h3>2)Check if trout stocking reports are available</h3>
+    <em>Coming Soon</em>
+    <button>Check for Data</button> ===> <em>example output: Massachusetts stocks this river at the following points: [town name, town name, etc]</em>
+
+<h3>3)Lookup nearest USGS station for river flow data</h3>
+    <em>Coming soon</em>
+    <p>For now, 'add river' form auto-populated with 01175500, which is for the Swift</p>
+
+<p>asdf</p>
         <a href="/rivers">Back to Rivers Page</a>
     
-    </div>
-        
 </div>
 </div>
 
