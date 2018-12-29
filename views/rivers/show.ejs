@@ -1,19 +1,11 @@
 <% include ../partials/header %>
 
-<!-- style for displaying/hiding section info panels -->
-<!-- eventually move into main.css, but here now just for ease of testing -->
-<style>
-
-</style>
-
-
 <div class="container">
     <div class="row">
         <div class="col-md-3" id="sidebar-sticky">
             <p class="lead">River Dashboard</p>
             <div class="list-group" id="river-menu">
-                <!--<nav>-->
-                    <!--<div id="river-menu">-->
+               
                     <nav>
                 <ul class="nav" role="tablist">
                     <li class="list-group-item active"><%=river.name%></li>
@@ -23,19 +15,8 @@
                     <li class="list-group-item"><a href="#stocking">Stocking Report</a></li>
                     <li class="list-group-item"><a href="#outings">Past Outings</a></li>
                     <li class="list-group-item"><a href="#map">Map</a></li>
-
-                    
-                    <!-- Print out an LI for each river section -->
-                    <!-- user can then click to toggle a display planel for that section -->
-                    
-                    <% //river.sections.forEach(function(section){ %>
-                        <!--<li class="list-group-item" id="<%=//section.name%>">-->
-                            <%= //section.name %>
-                        <!--</li>-->
-                    <% //}); %>
                     
                 </ul>
-                <!--</div>-->
                 </nav>
             </div> <!-- list-group -->
         </div>
@@ -45,7 +26,6 @@
                 <div class="caption-full">
                     <h4><%= river.name %></h4>
                     <h5><%= river.location %></h5>
-                    <!--<p><%= river.description %></p>-->
 
                 </div>
             </div>
@@ -89,30 +69,6 @@
 </section>
 <!-- END trout stocking -->
                 
-            
-<!--
-            <div class="thumbnail" id="map">
-                Map Div
-            </div>
--->
-
-            <div class="thumbnail">
-
-        <!-- Section info panel -->
-        <!-- Important: all toggle-panels have to have an ID prefix of 'section-' -->
-                
-                <!-- default section, hides once an actual section is selected -->
-<!--                <div id="section-default">Select a River Section to view more info</div>    -->
-                
-                <!-- Cycle through each river section and print out a div -->
-                <% //river.sections.forEach(function(section){ %>     
-<!--                    <div class="river-section hidden" id="section-<%= //section.name %>"> -->
-<!--                    <h2><%= //section.name %></h2>    -->
-<!--                    </div>    -->          
-<!--                <% //}); %>   -->
-            
-            </div>
-
 
 <section>
             <div class="well section" id="outings">
@@ -122,10 +78,6 @@
                         <ul>
                             <li>Add, edit, delete entries that detail past outings on this river. Dates, section(s) fished, fishes caught, flies used, notes & observations, etc.</li>
                         </ul>
-                <% //river.comments.forEach(function(comment){ %>
-                    <p><strong><%= //comment.author %></strong> - <%=//comment.text %></p>
-                
-                <% //}) %>
             </div>
 </section>
             
@@ -140,7 +92,6 @@
 
 <script type="text/javascript" src="../js/mapbox-show.js"></script>
             
-<!--<section id="map" class="section">-->
             <div class="thumbnail">
                 <div class="container-fluid">
                     <div class="row">
@@ -156,7 +107,6 @@
                     </div>
                 </div>
             </div>
-<!--</section>-->
 <!-- END map -->
             
 
@@ -172,23 +122,5 @@
             </div>
         </div>
     </div>
-
-
-<script>
-//JQUERY functionality that allows user to select & view info for a given section
-//Current problem: only works if section's 'name' property contains no spaces
-
-/*
-    $("#river-sections li").on("click", function(e){
-
-        $this = $(this);
-        $id = $this.attr('id');
-        $class = '.' + $('#section-' + $id).attr('class').replace('hide', '');
-
-        $('div[id^=section]').not($class).addClass('hidden');
-        $('#section-' + $id).removeClass('hidden');
-    });
-*/
-</script>
 
 <% include ../partials/footer %>

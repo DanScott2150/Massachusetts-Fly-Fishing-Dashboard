@@ -1,14 +1,77 @@
 <% include ../partials/header %>
 
+<script>
+
+//     var rivers = [];
+    
+//     var riverCount = <%=rivers.length%>;
+        
+        
+//     console.log(riverCount);
+
+//     function populateWeather(river){
+//         let riverLat = river.lat;
+//         let riverLng = river.lng;
+//         let darkSkyKey = "<%=process.env.DARKSKYAPIKEY%>";
+//         let weatherAPI = `https://api.darksky.net/forecast/${darkSkyKey}/${riverLat},${riverLng}`;
+    
+//     axios.get(weatherAPI)
+//     .then((response) => {
+//         console.log(response.data);
+//     });
+// }
+
+//     rivers.forEach(function(river){
+//         populateWeather(river);
+// });
+
+</script>
+
 <div class="container">
 
     <header class="jumbotron">
-        <h1>River Dahsboard</h1>
-        <p>Intro Text</p>
-        <p>
-    
-            <a class="btn btn-primary btn-lg" href="/rivers/new">Add New River</a>
-        </p>        
+        <%= console.log(weatherDashboard); %>
+
+       <table>
+           <tr>
+               <th>River Name</th>
+               <th>Day 1</th>
+               <th>Day 2</th> 
+               <th>Day 3</th>
+               <th>Day 4</th> 
+               <th>Day 5</th>
+               <th>Day 6</th> 
+               <th>Day 7</th>
+               <th>Day 8</th> 
+               <th>Day 9</th>
+               <th>Day 10</th> 
+               <th>Current Flow</th>
+               <th>Last Stocking</th>
+           </tr>
+
+           <% rivers.forEach(function(river){ %>
+           <tr>
+            <td><%= river.name %></td>
+            
+            
+            <td>1</td>
+            <td>2</td>
+            <td>3</td>
+            <td>4</td>
+            <td>5</td>
+            <td>6</td>
+            <td>7</td>
+            <td>8</td>
+            <td>9</td>
+            <td>10</td>
+
+            <td>500cfs</td>
+            <td>December 12, 2018</td>   
+               
+           </tr>
+           <% }); %>
+
+       </table>
     </header>
 
     <div class="row text-center" style="display:flex; flex-wrap: wrap">
@@ -20,7 +83,6 @@
                     <h4><%= river.name %></h4>   
                     <h4><%= river.location %></h4>
                 </div> 
-                <p><%= river.description %></p>
                 <a href="/rivers/<%= river._id %>" class="btn btn-primary">More Info</a>
                 </div>
                 

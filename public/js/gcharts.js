@@ -1,5 +1,7 @@
 //Google Charts API
-//GCharts Loader script in partials/header.ejs
+//GCharts Loader script in partials/header.ejs, creates var google
+/* global google */
+/* global theRiver */
 
 //Pulls from public Google Spreadsheet maintained by Mass Fish & Wildlife of trout stocking data
 
