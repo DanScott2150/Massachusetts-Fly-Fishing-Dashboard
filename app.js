@@ -32,12 +32,12 @@ seedDB();
 
 //INDEX route
 //Main page, shows all rivers
-app.get("/", middleware.dashboardWeather2, function(req, res){
+app.get("/", middleware.dashboardWeather2, middleware.dashboardUSGS, function(req, res){
     River.find({}, function(err, allRivers){
         if(err){console.log(err)}
         else {
             // console.log("From routes:" + res.locals.weatherDashboard);
-            res.render("rivers/index", {rivers: allRivers, weatherDashboard: res.locals.weatherDashboard});
+            res.render("rivers/index", {rivers: allRivers, weatherDashboard: res.locals.weatherDashboard, flowRate: res.locals.usgsDashboard});
         }
     });
 });

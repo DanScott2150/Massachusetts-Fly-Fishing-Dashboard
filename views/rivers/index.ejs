@@ -1,98 +1,131 @@
 <% include ../partials/header %>
 
-<script>
+<% //var riverData = JSON.stringify(rivers) %>
+<% //console.log(riverData); %>
+<% //console.log(rivers); %>
 
-//     var rivers = [];
-    
-//     var riverCount = <%=rivers.length%>;
-        
-        
-//     console.log(riverCount);
 
-//     function populateWeather(river){
-//         let riverLat = river.lat;
-//         let riverLng = river.lng;
-//         let darkSkyKey = "<%=process.env.DARKSKYAPIKEY%>";
-//         let weatherAPI = `https://api.darksky.net/forecast/${darkSkyKey}/${riverLat},${riverLng}`;
-    
-//     axios.get(weatherAPI)
-//     .then((response) => {
-//         console.log(response.data);
-//     });
-// }
+<style>
 
-//     rivers.forEach(function(river){
-//         populateWeather(river);
-// });
-
-</script>
+</style>
 
 <div class="container">
 
-    <header class="jumbotron">
-        <%= console.log(weatherDashboard); %>
-
-       <table>
-           <tr>
-               <th>River Name</th>
-               <th>Day 1</th>
-               <th>Day 2</th> 
-               <th>Day 3</th>
-               <th>Day 4</th> 
-               <th>Day 5</th>
-               <th>Day 6</th> 
-               <th>Day 7</th>
-               <th>Day 8</th> 
-               <th>Day 9</th>
-               <th>Day 10</th> 
-               <th>Current Flow</th>
-               <th>Last Stocking</th>
-           </tr>
-
-           <% rivers.forEach(function(river){ %>
-           <tr>
-            <td><%= river.name %></td>
-            
-            
-            <td>1</td>
-            <td>2</td>
-            <td>3</td>
-            <td>4</td>
-            <td>5</td>
-            <td>6</td>
-            <td>7</td>
-            <td>8</td>
-            <td>9</td>
-            <td>10</td>
-
-            <td>500cfs</td>
-            <td>December 12, 2018</td>   
-               
-           </tr>
-           <% }); %>
-
-       </table>
-    </header>
-
-    <div class="row text-center" style="display:flex; flex-wrap: wrap">
-               <% rivers.forEach(function(river){ %>
-            <div class="col-md-3 col-sm-6">
-                <div class="thumbnail">
+<div class="table-responsive">
+    <table class="table table-hover text-center">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">River Name</th>
+                <th scope="col" class="text-center">
+                    <% var today = new Date(); %>
+                    <%= today.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric'}); %><br/>
+                    <%= today.toLocaleDateString('en-US', {weekday: 'short'}); %><br/>
+                </th>
                 
-                <div class="caption">
-                    <h4><%= river.name %></h4>   
-                    <h4><%= river.location %></h4>
-                </div> 
-                <a href="/rivers/<%= river._id %>" class="btn btn-primary">More Info</a>
-                </div>
+                <% for(let i=1; i<8; i++){ %>
                 
-            </div>
-             
+                    <th scope="col" class="text-center">
+                        <% var day = new Date();
+                        day.setDate(today.getDate()+i) %>
+                        
+                        <%= day.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric'}); %><br/>
+                        <%= day.toLocaleDateString('en-US', {weekday: 'short'}); %>
+                    </th>
+                
+                <% } %>
+                
+                <th scope="col">Current Flow</th>
+                <th scope="col">Last Stocking</th>
+            </tr>
+        </thead>
         
-        <% }); %>
+        <tbody>
 
-                
-    </div>
+            <% rivers.forEach(function(river){ %>
+                <tr>
+                    <th scope="row">
+                        <%= river.name %><br/>
+                        <%= river.location %>
+                    </th>
+        
+                    <td>
+                        <svg width="50px" height="50px">
+                            <use xlink:href="#<%=weatherDashboard[river.name].daily.data[0].icon%>" />
+                        </svg><br/>
+                        <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMax) %><br/>
+                        <b>L:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMin) %>
+                    </td>
+        
+                    <% for (let i=1; i<8; i++){ %>
+                        <td>
+                            <svg width="50px" height="50px">
+                                <use xlink:href="#<%=weatherDashboard[river.name].daily.data[i].icon%>" />
+                            </svg><br/>
+                            <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[i].temperatureMax) %><br/>
+                            <b>L:</b> <%= Math.round(weatherDashboard[river.name].daily.data[i].temperatureMin) %>
+
+                        </td>
+
+                    <% } %>
+        
+        
+                        <td>
+                            <%= flowRate[river.name] %> CFS
+                        </td>
+                    <td><span id="<%=river._id%>-stocked">(coming soon)</span>
+                    
+                        <script>
+                            
+                            
+                            
+      
+                                
+                                (function dashboardLastStocked(){
+                                console.log("Stocking script");
+                                let dashboardRiver = "<%=river.name%>";
+                                google.charts.load('current');  //[, {'packages': ['controls', 'table']
+                                google.charts.setOnLoadCallback(drawTable);
+                            	  
+                            	function drawTable() {
+                            	    console.log("drawTable()");
+                            		var queryString = encodeURIComponent(`SELECT A, B WHERE B="${dashboardRiver}"`);
+                            		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/gviz/tq?gid=0&headers=1&tq=' + queryString);
+                            		fishquery.send(handleQueryResponse);
+                            	} 
+                             
+                                function handleQueryResponse(response) {
+                                    if (response.isError()) {
+                                        alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
+                                        return;
+                                    }
+                            
+                            		var data = response.getDataTable();
+                            		var lastStocked = data.wg[0].c[0].f;
+                            		console.log(data);
+                            		console.log(dashboardRiver + " last stocked on: " + lastStocked);
+                            		document.getElementById("<%=river._id%>-stocked").textContent = lastStocked;
+                            // 		let span = document.querySelectorAll("span");
+                            // 		span.innerHTML = lastStocked;
+                            		
+                            // 		document.getElementById("myspan").textContent="newtext";
+                                }
+                            })();
+
+
+                        </script>
+                    
+                    </td>   
+                    <td>
+                     <a href="/rivers/<%= river._id %>" class="btn btn-primary">More Info</a>
+                     </td>
+        
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<button type="button" class="btn btn-primary btn-block">+ Add New River</button>
 </div>
 
 <% include ../partials/footer %>

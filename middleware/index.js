@@ -9,138 +9,117 @@ var middlewareObj = {};
 
 var darkSkyKey = process.env.DARKSKYAPIKEY;
 var dashboardObj = {};
+var usgsObj = {};
 
-
-middlewareObj.dashboardWeather2 = async function(req, res, next){
-// 1), lookup all Rivers
-    const rivers = await River.find({}, function(err, rivers){
-                return new Promise((resolve, reject) => {
-                    if(rivers){resolve(rivers);}
-                });
-        });
-        
-// 2) Build out the dashboard object which gets passed thru to view template
-    await rivers.forEach(async function(river){
-        let riverName = river.name;
-        dashboardObj[riverName] = null;
-        // await getWeather(river);
-        
-        let riverLat = river.lat;
-        let riverLng = river.lng;
-        let exclude = 'currently,minutely,hourly,alerts,flags'; //avoid unnecessary data from API response
-        let weatherAPI = `https://api.darksky.net/forecast/${darkSkyKey}/${riverLat},${riverLng}?exclude=${exclude}`;
+middlewareObj.dashboardUSGS = function(req, res, next){
+    /* Makes API call to USGS */
     
-        let weatherData = await axios.get(weatherAPI);
-        let temp = weatherData.data.daily.data[0].temperatureMax;
-        
-        dashboardObj[riverName] = temp;
-        
+    const rivers = River.find({}, function(err, rivers){
+            return new Promise((resolve, reject) => {
+                if(rivers){resolve(rivers);}
+            });
+         });
+         
+    rivers.then(async function(rivers){
+        for (let river of rivers){
+            let riverName = river.name;
+            usgsObj[riverName] = null;
+            usgsObj[riverName] = await getUSGS(river);
+        }
+           res.locals.usgsDashboard = usgsObj;
+        //   console.log(usgsObj);
+            next(); 
     });
     
+};
+         
+async function getUSGS(river){
+    let currentID = river.usgsID;
+        
+        var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
+        return axios.get(usgsURL)
+            .then((response) => {
+                let flowRate = response.data.value.timeSeries[0].values[0].value[0].value;
+                return flowRate;
+            });
+}
 
-    // console.log("Dashboard 2: " + dashboardObj);
-    res.locals.weatherDashboard = dashboardObj;
-    next();
+
+middlewareObj.dashboardWeather2 = function(req, res, next){
+  
+  //step 1, find all rivers
+  
+  const rivers = River.find({}, function(err, rivers){
+            return new Promise((resolve, reject) => {
+                if(rivers){resolve(rivers);}
+            });
+         });
+         
+    rivers.then(async function(rivers){
+        for (let river of rivers){
+            let riverName = river.name;
+            dashboardObj[riverName] = null;
+            dashboardObj[riverName] = await getWeather(river);
+            
+
+
+        }
+                    // console.log(dashboardObj);
+                       res.locals.weatherDashboard = dashboardObj;
+                        next(); 
+    });
     
 };
 
 
 async function getWeather(river){
-    console.log("getWeather(): " + river.name);
+    // console.log("getWeather(): " + river.name);
     
     let riverLat = river.lat;
     let riverLng = river.lng;
-    let exclude = 'currently,minutely,hourly,alerts,flags'; //avoid unnecessary data from API response
+    let exclude = 'minutely,hourly,alerts,flags'; //avoid unnecessary data from API response
     let weatherAPI = `https://api.darksky.net/forecast/${darkSkyKey}/${riverLat},${riverLng}?exclude=${exclude}`;
 
-    let weather = await axios.get(weatherAPI)
-                    .then((response) => {
+    // let currentRiver = river.name;
+    let weather = await axios.get(weatherAPI);
+    
+    let data = weather.data;
+    
+    // let data = [
+    //     weather.data.daily.data[0].temperatureMax, 
+    //     weather.data.daily.data[1].temperatureMax,
+    //     weather.data.daily.data[2].temperatureMax, 
+    //     weather.data.daily.data[3].temperatureMax,
+    //     weather.data.daily.data[4].temperatureMax, 
+    //     weather.data.daily.data[5].temperatureMax,
+    //     weather.data.daily.data[6].temperatureMax, 
+    //     weather.data.daily.data[7].temperatureMax,
+    //     // weather.data.daily.data[8].temperatureMax, 
+    //     // weather.data.daily.data[9].temperatureMax
+    //     ];
+    
+    return data;
+    
+    // dashboardObj[currentRiver] = weather.data.daily.data[0].temperatureMax;
+    // return new Promise((resolve, reject) => {
+    //     resolve(dashboardObj[currentRiver]);
+    // });
+    // console.log(dashboardObj);
+/*                    .then((response) => {
                         let currentRiver = river.name;
                         // console.log(currentRiver + response.data.daily.data[0].temperatureMax);
                         dashboardObj[currentRiver] = response.data.daily.data[0].temperatureMax;
-                        console.log(dashboardObj);
+                        // console.log(dashboardObj);
                         // console.log(response.data.daily.data[0]);
                     });
                     
                     return weather;
-    
+  */  
 }
 
 
-middlewareObj.dashboardWeather = function(req, res, next){
-    console.log("Dashboard Weather middleware");
-
-    
-    
-    var lookupRivers = () => 
-        River.find({}, function(err, rivers){
-            if(err){
-                console.log(err);
-            } else {
-                return new Promise((resolve, reject) => {
-                    if(rivers){
-                        resolve(rivers);
-                    }
-                });
-            }
-        });
-    
-
-    lookupRivers().then((response) => {
-        response.forEach(function(river){
-            console.log("forEach loop: " + river.name);
-            getWeather(river);
-            // getWeather(river).then((data) => {
-            //     console.log(data);
-            // });
-        });
-        console.log("Dash Obj: " + dashboardObj);
-        res.locals.weatherDashboard = dashboardObj;
-    });
-       /*     
-        rivers.forEach(function(river){
-            console.log(river.name);
-            let riverLat = river.lat;
-            let riverLng = river.lng;
-            let exclude = 'currently,minutely,hourly,alerts,flags'; //avoid unnecessary data from API response
-            let weatherAPI = `https://api.darksky.net/forecast/${darkSkyKey}/${riverLat},${riverLng}?exclude=${exclude}`;
-    
-            axios.get(weatherAPI)
-            .then((response) => {
-                dashboardObj[river.name] = response.data.daily.data[0].temperatureMax;
-                // console.log(response.data.daily.data[0]);
-            })
-            .then((response) => {
-                console.log(dashboardObj);
-                res.locals.weatherDashboard = dashboardObj;
-            });
-            // console.log(dashboardObj);
-        });
-    }); */
-    next();
-};
-
-middlewareObj.populateweather = function(req, res, next){
-    River.find({}, function(err, rivers){
-        if(err){
-            console.log(err);
-        }
-        rivers.forEach(function(river){
-            // console.log(river);
-            weatherAPI(river);
-        });
-    });
-    
-
-    next();
-};
 
 
-
-
-function weatherAPI(river){
-  
-}
 
 middlewareObj.troutStocking = function(req, res, next){
   next();
