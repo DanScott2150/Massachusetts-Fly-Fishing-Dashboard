@@ -3,44 +3,10 @@ var express     = require("express"),
     River       = require("../models/river"),
     middleware  = require("../middleware");
 
-//NEW route -- for user to create new river
-router.get("/new", function(req, res){
-    res.render("rivers/new");
-});
-
-//CREATE route
-router.post("/", function(req, res){
-    //Data pulled from form on NEW route: views/new.ejs
-    var name = req.body.name;
-    var lat = req.body.lat;
-    var lng = req.body.lng;
-    var location = req.body.location;
-    var description = req.body.description;
-    var usgs = req.body.usgs;
-
-    var newRiver = {
-        name:name, 
-        location:location, 
-        lat:lat, 
-        lng:lng, 
-        usgsID:usgs, 
-        description: description
-    };
-    
-    River.create(newRiver, function(err, newlyCreated){
-        if(err){
-            console.log(err);
-        } else {
-            res.redirect("/");
-        }
-    });
-});
-
-
 //SHOW route
 router.get("/:id", middleware.findWeather, middleware.usgsData, middleware.troutStocking, function(req, res){
     //find river with the provided ID
-    River.findById(req.params.id).exec(function(err, currentRiver){
+    River.findById(req.params.id).populate("journals").exec(function(err, currentRiver){
         if(err){
             console.log(err);
         } else {
@@ -78,6 +44,39 @@ router.delete("/:id", function(req, res){
         if(err){
             console.log(err);
             res.redirect("back");
+        } else {
+            res.redirect("/");
+        }
+    });
+});
+
+  //NEW route -- for user to create new river
+router.get("/new", function(req, res){
+    res.render("rivers/new");
+});
+
+//CREATE route
+router.post("/", function(req, res){
+    //Data pulled from form on NEW route: views/new.ejs
+    var name = req.body.name;
+    var lat = req.body.lat;
+    var lng = req.body.lng;
+    var location = req.body.location;
+    var description = req.body.description;
+    var usgs = req.body.usgs;
+
+    var newRiver = {
+        name:name, 
+        location:location, 
+        lat:lat, 
+        lng:lng, 
+        usgsID:usgs, 
+        description: description
+    };
+    
+    River.create(newRiver, function(err, newlyCreated){
+        if(err){
+            console.log(err);
         } else {
             res.redirect("/");
         }

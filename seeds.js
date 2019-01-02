@@ -2,6 +2,7 @@
 
     var mongoose = require("mongoose");
     var River = require("./models/river");
+    var Journal = require("./models/journal");
      
     var data = [
         {
@@ -41,6 +42,20 @@
                 River.create(seed, function(err, river){
                     if(err){
                         console.log(err);
+                    } else {
+                        //create journal entries
+                        /* Journal.create(
+                            {
+                                text: "Wicked big fish here",
+                                author: "Sully"
+                            }, 
+                            function(err, journal){
+                                if(err){console.log(err)}
+                                else {
+                               river.journals.push(journal);
+                               river.save();
+                                }
+                            });*/
                     }
                     
                 });

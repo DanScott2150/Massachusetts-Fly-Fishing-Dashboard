@@ -71,14 +71,23 @@
                 
 
 <section>
-            <div class="well section" id="outings">
-                <h4>Past Outings</h4>
-                        <p>Coming soon: Past outings/journal</p>
-                        <p>Planned feature, user can</p>
-                        <ul>
-                            <li>Add, edit, delete entries that detail past outings on this river. Dates, section(s) fished, fishes caught, flies used, notes & observations, etc.</li>
-                        </ul>
-            </div>
+    <div class="well section" id="outings">
+        <h4>Trip Journal</h4>
+        
+        <p>
+            <a class="btn btn-success" href="/rivers/<%=river._id%>/journals/new">
+                Add New Journal Entry
+            </a>
+        </p>
+    
+        <% river.journals.forEach(function(journal){ %>
+    
+            <p>
+                <strong><%= journal.date.toLocaleString('en-us', { timeZone: 'UTC', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></strong> : 
+                <%= journal.text %>
+            </p>
+        <% }) %>
+    </div>
 </section>
             
         
