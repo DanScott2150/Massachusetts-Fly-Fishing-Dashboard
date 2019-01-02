@@ -1,12 +1,16 @@
 //Google Maps API
 //Not currently used
 
-//Starting building out map feature with GMaps, but Google handles rivers weird. Switched to MapBox
-//because of ability to extract River Name based on where a user clicks. Also, Google's new API
-//pricing sounds like it's driving a lot of developers away... might be more worthwhile in the long-run
-//to learn MapBox from the get-go.
+/*  
 
-//Either way, leaving this code here in case I need to come back to Google Maps for some reason.
+    Starting building out map features with GMaps, but Google handles rivers weird. Switched to MapBox
+    because of ability to extract River Name based on where a user clicks. Also, Google's new API
+    pricing sounds like it's driving a lot of developers away... might be more worthwhile in the long-run
+    to learn MapBox (or some alternative) from the get-go.
+
+    Either way, leaving this code here in case I need to come back to Google Maps for some reason.
+    
+*/
 
 // <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHwdkHGOv55partXLb5M5A_-uY0opL8Qg&callback=initMap"></script>
 function initMap(){

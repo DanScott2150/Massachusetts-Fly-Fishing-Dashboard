@@ -1,37 +1,41 @@
+<!-- RIVER SHOW ROUTE -->
+
 <% include ../partials/header %>
 
 <div class="container">
     <div class="row">
+        
+        <!-- Sidebar Nav -->
         <div class="col-md-3" id="sidebar-sticky">
             <p class="lead">River Dashboard</p>
+            
             <div class="list-group" id="river-menu">
-               
-                    <nav>
-                <ul class="nav" role="tablist">
-                    <li class="list-group-item active"><%=river.name%></li>
-                    
-                    <li class="list-group-item"><a href="#weather">Weather</a></li>
-                    <li class="list-group-item"><a href="#usgs">Flow Rates</a></li>
-                    <li class="list-group-item"><a href="#stocking">Stocking Report</a></li>
-                    <li class="list-group-item"><a href="#outings">Past Outings</a></li>
-                    <li class="list-group-item"><a href="#map">Map</a></li>
-                    
-                </ul>
+                <nav>
+                    <ul class="nav" role="tablist">
+                        <li class="list-group-item active"><%=river.name%></li>
+                        <li class="list-group-item"><a href="#weather">Weather</a></li>
+                        <li class="list-group-item"><a href="#usgs">Flow Rates</a></li>
+                        <li class="list-group-item"><a href="#stocking">Stocking Report</a></li>
+                        <li class="list-group-item"><a href="#outings">Past Outings</a></li>
+                        <li class="list-group-item"><a href="#map">Map</a></li>
+                        
+                    </ul>
                 </nav>
             </div> <!-- list-group -->
         </div>
-        
+        <!-- End Sidebar -->
+
+        <!-- Main section -->
         <div class="col-md-9">
+            
             <div class="thumbnail">
                 <div class="caption-full">
                     <h4><%= river.name %></h4>
                     <h5><%= river.location %></h5>
-
                 </div>
             </div>
             
-<!-- Weather -->
-<!--<section id="weather" class="section">-->
+        <!-- Weather -->
             <div class="thumbnail"  id="weather">
                 <div class="container-fluid">
                     <div class="row">
@@ -39,26 +43,24 @@
                     </div>
                 </div>
             </div>
-<!--</section>-->
-<!-- end Weather -->
+        <!-- end Weather -->
 
-<!-- USGS river flow data -->            
-<!--<section id="usgs" class="section">-->
+        <!-- USGS river flow data -->            
             <div class="thumbnail" id="usgs">
                 <style>
+                    /* TODO: better way than quick fix below */
                     .thumbnail img{
                         width: 576px;
                     }
                 </style>
+                
                 <p>USGS Data Location: <%= usgsData.value.timeSeries[0].sourceInfo.siteName %> | River ID: <%= river.usgsID %></p>
                 <p>Current Flow: <%= usgsData.value.timeSeries[0].values[0].value[0].value %></p>
-                <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060"  width="288" height="200" alt="USGS Water-data graph for site 06025500"  /> 
+                <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060" width="288" height="200"/> 
             </div>
-<!--</section>-->
-<!-- end of USGS -->
+        <!-- end of USGS -->
 
-<!-- Trout Stocking -->
-<section id="stocking" class="section">
+        <!-- Trout Stocking -->
             <div class="thumbnail"  id="stocking">
                 <div class="container-fluid">
                     <div class="row">
@@ -66,41 +68,50 @@
                     </div>
                 </div>
             </div>
-</section>
-<!-- END trout stocking -->
+        <!-- END trout stocking -->
+        
+        <!-- Journal Entries -->
+            <div class="well section" id="outings">
+                <h4>Trip Journal</h4>
                 
-
-<section>
-    <div class="well section" id="outings">
-        <h4>Trip Journal</h4>
+                <p>
+                    <a class="btn btn-success" href="/rivers/<%=river._id%>/journals/new">+ Add New Journal Entry</a>
+                </p>
+            
+                <% river.journals.forEach(function(journal){ %>
+                <% /* For given river, lookup in DB all associated Journal entries */ %>
+            
+                    <p>
+                        <strong>
+                            <%= journal.date.toLocaleString('en-us', { 
+                                    timeZone: 'UTC', 
+                                    weekday: 'long', 
+                                    year: 'numeric', 
+                                    month: 'long', 
+                                    day: 'numeric' 
+                                }) %>
+                            </strong> : 
+                        <%= journal.text %>
+                    </p>
+                    
+                <% }); /* river.journals.forEach() */ %>
+            </div>
+        <!-- End Journal Entries -->
         
-        <p>
-            <a class="btn btn-success" href="/rivers/<%=river._id%>/journals/new">
-                Add New Journal Entry
-            </a>
-        </p>
-    
-        <% river.journals.forEach(function(journal){ %>
-    
-            <p>
-                <strong><%= journal.date.toLocaleString('en-us', { timeZone: 'UTC', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></strong> : 
-                <%= journal.text %>
-            </p>
-        <% }) %>
-    </div>
-</section>
-            
+        <!-- MAP -->
         
+            <div id='map' style='width: 100%; height: 500px;'></div>
             
-<div id='map' style='width: 100%; height: 500px;'></div>
+            <script>
+                //pass river lat/lng from server-side to client-side
+                //is there a better way to do this?
+                var mapCenter = [<%=river.lng%>, <%=river.lat%>];
+            </script>
 
-<script>
-    //pass river lat/lng from server-side to client-side
-    var mapCenter = [<%=river.lng%>, <%=river.lat%>];
-</script>
-
-<script type="text/javascript" src="../js/mapbox-show.js"></script>
+            <!-- MapBox API -->
+            <script type="text/javascript" src="../js/mapbox-show.js"></script>
             
+            <!-- Notes to myself/plan for the future -->
             <div class="thumbnail">
                 <div class="container-fluid">
                     <div class="row">
@@ -116,9 +127,9 @@
                     </div>
                 </div>
             </div>
-<!-- END map -->
-            
-
+        <!-- END map -->
+        
+        <!-- EDIT/DELETE Routes -->
             <div class="well">
                 <a class="btn btn-warning" href="/rivers/<%= river._id %>/edit">Edit</a>
                 <form class="delete-form" action="/rivers/<%= river._id%>?_method=DELETE" method="POST">
@@ -128,8 +139,10 @@
             
             
 
-            </div>
-        </div>
-    </div>
+        </div> <!-- col-md-9 -->
+        <!-- END of Main Section -->
+        
+    </div> <!-- row -->
+</div> <!-- container -->
 
 <% include ../partials/footer %>

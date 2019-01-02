@@ -1,22 +1,26 @@
+<!-- Populates trout stocking data on River Show Route -->
+
 <% var stockedRiver = river.name; %>
 
 <!-- Google Charts API -->
 	<script type="text/javascript">
 		//Passes River name variable from server side to client side
 		//Gets used in gcharts.js
+		//There's probably a better way to do this
 		var theRiver = "<%=stockedRiver%>";
 	</script>
-    <script type="text/javascript" src="../js/gcharts.js"></script>
+	<script type="text/javascript" src="../js/gcharts.js"></script>
 <!-- END google charts API -->
 
 <div class="col">
     <h2>Trout Stocking</h2>
-    
     <p>Trout Stocking report for <%= river.name %></p>
-<div id="dashboard_div">
+    
+    <!-- Dashboard populated via Google Charts script -->
+	<div id="dashboard_div">
 		<div id="filter_div" class="filter" style="display:none"></div>
-		Filter by Town: <div id="filterTown_div" class="filter"></div>
+			Filter by Town: <div id="filterTown_div" class="filter"></div>
 		<div id="trout_table"></div>
 	</div>
-    
-</div> <!-- col-md-7 -->
+
+</div> <!-- col -->

@@ -1,3 +1,17 @@
+body{
+    /* needed for bootstrap scrollspy plugin, which enables sticky-sidebar on river show route */
+    position: relative;
+}
+
+#weather svg{
+    display: block;
+    outline: 1px solid blue;
+    width:100px;
+    max-width: 100%;
+    max-height:100px;
+    height: auto;
+}
+
 .nav .active a{
     color: inherit;
 }
@@ -15,6 +29,7 @@
 .thumbnail img{
     width: 100%;
 }
+
 
 .thumbnail{
     padding: 0;

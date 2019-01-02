@@ -1,10 +1,11 @@
-require('dotenv').config(); //API keys for DarkSky and Google Sheets(not currently used)
-    
+require('dotenv').config(); //API keys for DarkSky and Google Sheets(Sheets API not currently used)
 var express     = require('express'),
     app         = express(),
-    bodyParser  = require('body-parser'),
     mongoose    = require("mongoose"),
-    River       = require("./models/river"),
+    bodyParser  = require('body-parser');
+
+//Schema Models
+var River       = require("./models/river"),
     Journal       = require("./models/journal"),
     middleware  = require("./middleware");
 
@@ -13,28 +14,32 @@ var indexRoutes     = require('./routes/index'),
     riverRoutes     = require('./routes/rivers'),
     journalRoutes   = require('./routes/journals');
 
+//App initialization
 mongoose.connect("mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));
-var methodOverride = require("method-override");    //Method Override to support HTTP 'put' & 'delete' methods  
+var methodOverride = require("method-override");    //To support HTTP 'put' & 'delete' methods  
 app.use(methodOverride("_method"));
 
 //Seed database with dummy data for development purposes. Deletes all existing and then repopulates
-var seedDB = require("./seeds");
-seedDB();
+// var seedDB = require("./seeds");
+// seedDB();
 
+/////////////////
+//Journal Routes
+////////////////
+
+/* TODO: Split out into 'routes' folder.
+    Tried it and it threw errors. Moved back here for now */
+
+//Create new journal entry for a river
 app.get("/rivers/:id/journals/new", function(req, res){
     River.findById(req.params.id, function(err, currentRiver){
-        if(err){
-            console.log(err);
-            
-        } else {
-            console.log(currentRiver);
-           res.render("journals/new", {river: currentRiver}); 
+        if(err){console.log(err)} 
+        else {
+            res.render("journals/new", {river: currentRiver}); 
         }
-        
     });
 });
 
@@ -44,7 +49,7 @@ app.post("/rivers/:id/journals/", function(req, res){
             console.log(err);
             res.redirect("/rivers");
         } else {
-            console.log(req.body.journal);
+            //Create DB entry for new journal entry
             Journal.create(req.body.journal, function(err, journal){
                 if(err){
                     console.log(err);
@@ -55,46 +60,37 @@ app.post("/rivers/:id/journals/", function(req, res){
                 }
             });
         }
-});
+    });
 });
 
-//Home Page Route - Dashboard
+//End of Journal Routes
+
+
+//////////////////////
+//Dashboard Route (main page of app)
+////////////////////
+
+//Middleware functions generate data (via API calls) for dashboard table
 app.get("/", middleware.dashboardWeather2, middleware.dashboardUSGS, function(req, res){
     River.find({}, function(err, allRivers){
         if(err){console.log(err)}
         else {
-            res.render("rivers/index", 
-            {
-                rivers: allRivers, 
-                weatherDashboard: res.locals.weatherDashboard, 
-                flowRate: res.locals.usgsDashboard
-            });
+            res.render("rivers/index",
+                {
+                    rivers: allRivers, 
+                    weatherDashboard: res.locals.weatherDashboard, 
+                    flowRate: res.locals.usgsDashboard
+                });
         }
     });
 });
 
 
-    
-
-
-
-
-// app.use(function(req, res, next){
-//     res.locals.currentUser = req.user;
-//     next();
-// });
-
-
-
-
 //Routes
-app.use("/", indexRoutes);
-app.use("/rivers/:id/journals", journalRoutes);
+//app.use("/", indexRoutes);                        //Currently empty.
+//app.use("/rivers/:id/journals", journalRoutes);   //Currently empty
 app.use("/rivers", riverRoutes);
 
-
-
-  
 //Launch server
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("Server Has Launched");

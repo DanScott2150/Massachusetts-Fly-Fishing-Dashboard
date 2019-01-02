@@ -1,163 +1,152 @@
-//Middleware Index
+// Middleware Functions
+// Used to:
+//  - Generate Weather data via API call
+//  - Generate USGS river flow rates via API call
 
-//Pull in env variables that hold API keys    
-require('dotenv').config();
+/*  *** TODO ***
+    Right now, both Weather & USGS have two separate
+    middleware functions each. There's one set of 
+    functions to generate the API calls for a single River
+    (used in the river/show route). There's another set
+    of functions to generate the API calls to populate
+    the Homepage Dashboard ('/' index). There's certainly
+    a way to make the code a lot more DRY. Will have to
+    bookmark to revisit later.
+*/
 
-var axios = require("axios");
-var River = require("../models/river");
-var middlewareObj = {};
+require('dotenv').config();     //API keys held via environment variables
 
-var darkSkyKey = process.env.DARKSKYAPIKEY;
-var dashboardObj = {};
-var usgsObj = {};
+var axios = require("axios"),
+    River = require("../models/river"),
+    darkSkyKey = process.env.DARKSKYAPIKEY,
+    dashboardObj = {},          //Holds weather data that gets passed to Dashboard route
+    usgsObj = {},               //Holds USGS data that gets passed to Dashboard route
+    middlewareObj = {};         //Object to hold middleware functions, gets exported via module.exports
 
+
+//Generate USGS River flow data, gets passed to root dashboard
 middlewareObj.dashboardUSGS = function(req, res, next){
-    /* Makes API call to USGS */
-    
+    //Lookup all Rivers
     const rivers = River.find({}, function(err, rivers){
+        if(err){console.log(err)}
+        else {
             return new Promise((resolve, reject) => {
                 if(rivers){resolve(rivers);}
             });
-         });
-         
-    rivers.then(async function(rivers){
-        for (let river of rivers){
-            let riverName = river.name;
-            usgsObj[riverName] = null;
-            usgsObj[riverName] = await getUSGS(river);
         }
-           res.locals.usgsDashboard = usgsObj;
-        //   console.log(usgsObj);
-            next(); 
     });
-    
+
+    //Once all Rivers are returned, loop through each and run getUSGS()
+    rivers.then(
+        async function(rivers){
+            for (let river of rivers){
+                //For each River, add a key/value pair to the usgsObj{}
+                let riverName = river.name;
+                usgsObj[riverName] = null;
+                usgsObj[riverName] = await getUSGS(river);
+            }
+            
+            //Once the for-of loop is complete for all Rivers, store the usgsObj{} in res.locals to pass it thru to the route
+            res.locals.usgsDashboard = usgsObj;
+            next();
+    });
 };
-         
+
+//Function for API call to USGS
 async function getUSGS(river){
-    let currentID = river.usgsID;
-        
-        var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
-        return axios.get(usgsURL)
-            .then((response) => {
-                let flowRate = response.data.value.timeSeries[0].values[0].value[0].value;
-                return flowRate;
-            });
+    let currentID = river.usgsID;   //Each River has a USGS ID# associated with it, stored in DB
+    
+    /*  USGS API does not require an API key
+        Parameter Codes (parameterCd) of 00060 & 00065 represent flow rate(cfs) and water gage height.
+        Reference: https://waterservices.usgs.gov/rest/IV-Service.html
+    */
+    
+    var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
+    
+    return axios.get(usgsURL)
+        .then((response) => {
+            let flowRate = response.data.value.timeSeries[0].values[0].value[0].value;
+            return flowRate;
+        });
 }
 
-
+//Generate weather data for root dashboard
 middlewareObj.dashboardWeather2 = function(req, res, next){
-  
-  //step 1, find all rivers
-  
-  const rivers = River.find({}, function(err, rivers){
+
+    // 1) Find all Rivers
+    const rivers = River.find({}, function(err, rivers){
+        if(err){console.log(err)}
+        else {
             return new Promise((resolve, reject) => {
                 if(rivers){resolve(rivers);}
             });
-         });
-         
+        }
+    });
+
+    // 2) Loop thru each River, make API call for weather data
     rivers.then(async function(rivers){
         for (let river of rivers){
             let riverName = river.name;
+            
+            // 3) For each River, add a key/value pair to the dashboardObj{}
             dashboardObj[riverName] = null;
             dashboardObj[riverName] = await getWeather(river);
-            
-
-
         }
-                    // console.log(dashboardObj);
-                       res.locals.weatherDashboard = dashboardObj;
-                        next(); 
+        
+        // 4) Store the dashboardObj{} in res.locals to pass it thru to the route
+        res.locals.weatherDashboard = dashboardObj;
+        next();
     });
-    
 };
 
-
+//Function for API call to get weather for Dashboard
 async function getWeather(river){
-    // console.log("getWeather(): " + river.name);
     
-    let riverLat = river.lat;
-    let riverLng = river.lng;
-    let exclude = 'minutely,hourly,alerts,flags'; //avoid unnecessary data from API response
-    let weatherAPI = `https://api.darksky.net/forecast/${darkSkyKey}/${riverLat},${riverLng}?exclude=${exclude}`;
+    // Populate latitude & longitude of River from DB
+    let riverLat = river.lat,
+        riverLng = river.lng,
+        exclude = 'minutely,hourly,alerts,flags', //avoid unnecessary data from API response
+        weatherAPI = `https://api.darksky.net/forecast/${darkSkyKey}/${riverLat},${riverLng}?exclude=${exclude}`;
 
-    // let currentRiver = river.name;
+    /*
+        DarkSky.net API key stored as environment variable
+        Docs: https://darksky.net/dev/docs
+    */
+    
     let weather = await axios.get(weatherAPI);
-    
     let data = weather.data;
-    
-    // let data = [
-    //     weather.data.daily.data[0].temperatureMax, 
-    //     weather.data.daily.data[1].temperatureMax,
-    //     weather.data.daily.data[2].temperatureMax, 
-    //     weather.data.daily.data[3].temperatureMax,
-    //     weather.data.daily.data[4].temperatureMax, 
-    //     weather.data.daily.data[5].temperatureMax,
-    //     weather.data.daily.data[6].temperatureMax, 
-    //     weather.data.daily.data[7].temperatureMax,
-    //     // weather.data.daily.data[8].temperatureMax, 
-    //     // weather.data.daily.data[9].temperatureMax
-    //     ];
-    
     return data;
-    
-    // dashboardObj[currentRiver] = weather.data.daily.data[0].temperatureMax;
-    // return new Promise((resolve, reject) => {
-    //     resolve(dashboardObj[currentRiver]);
-    // });
-    // console.log(dashboardObj);
-/*                    .then((response) => {
-                        let currentRiver = river.name;
-                        // console.log(currentRiver + response.data.daily.data[0].temperatureMax);
-                        dashboardObj[currentRiver] = response.data.daily.data[0].temperatureMax;
-                        // console.log(dashboardObj);
-                        // console.log(response.data.daily.data[0]);
-                    });
-                    
-                    return weather;
-  */  
 }
 
 
-
-
-
-middlewareObj.troutStocking = function(req, res, next){
-  next();
-};
-
-
-
-
+// Generate weather data for single River (rivers/show route)
 middlewareObj.findWeather = function(req, res, next){
-/* Makes API call to DarkSky to pull weather data */
-    var currentLat;
-    var currentLng;
-    var darkSkyKey = process.env.DARKSKYAPIKEY;
+
+    var currentLat,
+        currentLng,
+        darkSkyKey = process.env.DARKSKYAPIKEY;
     
-    //Find current river
+    //Find current river, and populate lat/long
     var findLatLng = () => 
-        //Find current river and return the lat & lng values
         River.findById(req.params.id, 'lat lng', function(err, foundRiver){
-        if(err){
-            console.log(err);
-        }
-        else {
-            //Since this requires a call to the database, need to use Promises to deal with async issues
-            return new Promise((resolve, reject) => {
-                if(foundRiver){
-                    // console.log("In Promise: " + foundRiver.lat);
-                    resolve(foundRiver);
-                }
-            });
-        }
-    });
-    
+            if(err){console.log(err)}
+            else {
+                //Since this requires a call to the database, need to use Promises to deal with async issues
+                return new Promise((resolve, reject) => {
+                    if(foundRiver){
+                        resolve(foundRiver);
+                    }
+                });
+            }
+        });
+
+    //After finding River lat & long, make API call
     findLatLng().then((response) => {
         currentLat = response.lat;
         currentLng = response.lng;
         
-        //Construct API call url
         var weatherURL = `https://api.darksky.net/forecast/${darkSkyKey}/${currentLat},${currentLng}`;
+        
         // console.log(`Coordinates for API call: ${currentLat}, ${currentLng}`);
         return axios.get(weatherURL);
     }).then((response) => {
@@ -168,44 +157,34 @@ middlewareObj.findWeather = function(req, res, next){
 
 };
 
-
-
+//Generate USGS flow data for single River (rivers/show route)
 middlewareObj.usgsData = function(req, res, next){
-/* Makes API call to USGS */
     var currentID;
     
-    //Find current river
+    //Lookup current river, return the associated USGS ID number
     var findCurrentID = () => 
-        //Find current river and return the usgs ID values
         River.findById(req.params.id, 'usgsID', function(err, foundRiver){
-        if(err){console.log(err); next();}
-        else {
-            //Since this requires a call to the database, need to use Promises to deal with async issues
-            return new Promise((resolve, reject) => {
-                if(foundRiver){
-                    // console.log("In Promise: " + foundRiver);
-                    resolve(foundRiver);
-                }
-            });
-        }
-    });
-    
+            if(err){console.log(err); next();}
+            else {
+                //Since this requires a call to the database, need to use Promises to deal with async issues
+                return new Promise((resolve, reject) => {
+                    if(foundRiver){
+                        resolve(foundRiver);
+                    }
+                });
+            }
+        });
+
+    //Make API call to USGS. No API key required
     findCurrentID().then((response) => {
         currentID = response.usgsID;
-        // console.log(currentID);
-        
-        //Construct API call url
-        //No API key required for USGS data
         var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
         return axios.get(usgsURL);
     }).then((response) => {
         var fullData = response.data;
-            res.locals.usgsData = fullData;
-        // console.log(fullData.value.timeSeries[0].variable.variableName);
-        // console.log(fullData.value.timeSeries[0].values[0].value[0].value);
+        res.locals.usgsData = fullData;
         next();
     });
-
 };
 
 module.exports = middlewareObj;

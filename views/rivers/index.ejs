@@ -1,122 +1,127 @@
+<!-- RIVER INDEX ROUTE -->
+<!-- Main Page of App, Dashboard view -->
+
 <% include ../partials/header %>
 
 <div class="container">
 
-<div class="table-responsive">
-    <table class="table table-hover text-center">
-        <thead class="thead-light">
-            <tr>
-                <th scope="col">River Name</th>
-                <th scope="col" class="text-center">
-                    <% var today = new Date(); %>
-                    <%= today.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric'}); %><br/>
-                    <%= today.toLocaleDateString('en-US', {weekday: 'short'}); %><br/>
-                </th>
-                
-                <% for(let i=1; i<8; i++){ %>
-                
-                    <th scope="col" class="text-center">
-                        <% var day = new Date();
-                        day.setDate(today.getDate()+i) %>
-                        
-                        <%= day.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric'}); %><br/>
-                        <%= day.toLocaleDateString('en-US', {weekday: 'short'}); %>
-                    </th>
-                
-                <% } %>
-                
-                <th scope="col">Current Flow</th>
-                <th scope="col">Last Stocking</th>
-            </tr>
-        </thead>
-        
-        <tbody>
-
-            <% rivers.forEach(function(river){ %>
+    <div class="table-responsive">
+        <table class="table table-hover text-center">
+            <thead class="thead-light">
                 <tr>
-                    <th scope="row">
-                        <%= river.name %><br/>
-                        <%= river.location %>
+                    <th scope="col">River Name</th>
+                    
+                    <!-- Populate Today's date in col header -->
+                    <th scope="col" class="text-center">
+                        <% var today = new Date(); %>
+                        <%= today.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric'}); %><br/>
+                        <%= today.toLocaleDateString('en-US', {weekday: 'short'}); %><br/>
                     </th>
+
+                    <!-- Populate next 7 days in column headers -->
+                    <% for(let i=1; i<8; i++){ %>
+                    <% /*start at i=1 because we want the first iteration to be tomorrow's date, so today+1 */ %>
+                        <th scope="col" class="text-center">
+                            <% var day = new Date();
+                            day.setDate(today.getDate()+i) %>
+                            <%= day.toLocaleDateString('en-US', {month: 'numeric', day: 'numeric'}); %><br/>
+                            <%= day.toLocaleDateString('en-US', {weekday: 'short'}); %>
+                        </th>
+                    <% } %>
+
+                    <th scope="col">Current Flow</th>
+                    <th scope="col">Last Stocking</th>
+                </tr>
+            </thead>
         
-                    <td>
-                        <svg width="50px" height="50px">
-                            <use xlink:href="#<%=weatherDashboard[river.name].daily.data[0].icon%>" />
-                        </svg><br/>
-                        <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMax) %><br/>
-                        <b>L:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMin) %>
-                    </td>
-        
-                    <% for (let i=1; i<8; i++){ %>
+            <tbody>
+
+                <% rivers.forEach(function(river){ %>
+                    <tr>
+                        <!-- River Name -->
+                        <th scope="row">
+                            <%= river.name %><br/>
+                            <%= river.location %>
+                        </th>
+                        
+                        <!-- River Weather for Today -->
                         <td>
                             <svg width="50px" height="50px">
-                                <use xlink:href="#<%=weatherDashboard[river.name].daily.data[i].icon%>" />
+                                <use xlink:href="#<%=weatherDashboard[river.name].daily.data[0].icon%>" />
                             </svg><br/>
-                            <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[i].temperatureMax) %><br/>
-                            <b>L:</b> <%= Math.round(weatherDashboard[river.name].daily.data[i].temperatureMin) %>
-
+                            <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMax) %><br/>
+                            <b>L:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMin) %>
                         </td>
-
-                    <% } %>
-        
-        
+                        
+                        <!-- Populate River Weather forecast for upcoming week -->
+                        <% for (let i=1; i<8; i++){ %>
+                            <td>
+                                <svg width="50px" height="50px">
+                                    <use xlink:href="#<%=weatherDashboard[river.name].daily.data[i].icon%>" />
+                                </svg><br/>
+                                <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[i].temperatureMax) %><br/>
+                                <b>L:</b> <%= Math.round(weatherDashboard[river.name].daily.data[i].temperatureMin) %>
+                            </td>
+                        <% } %>
+            
+                        <!-- River current flow rate -->
                         <td>
                             <%= flowRate[river.name] %> CFS
                         </td>
-                    <td><span id="<%=river._id%>-stocked">(coming soon)</span>
-                    
-                        <script>
+                        
+                        <!-- River last stocked date -->
+                        <td>
+                            <span id="<%=river._id%>-stocked">(loading)</span>
+                        
+                            <script>
                             
-                            
-                            
-      
-                                
+                            /* IIFE that looks up the Google Sheet for trout data, finds
+                                the river, and then finds the most recent date. Then
+                                replaces the above '(loading)' span with the date.
+                                This seems like it might be overkill (using the full Google Charts/DrawTable API),
+                                given that we're just looking up a single value. Will look into more later.
+                            */
                                 (function dashboardLastStocked(){
-                                console.log("Stocking script");
-                                let dashboardRiver = "<%=river.name%>";
-                                google.charts.load('current');  //[, {'packages': ['controls', 'table']
-                                google.charts.setOnLoadCallback(drawTable);
-                            	  
-                            	function drawTable() {
-                            	    console.log("drawTable()");
-                            		var queryString = encodeURIComponent(`SELECT A, B WHERE B="${dashboardRiver}"`);
-                            		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/gviz/tq?gid=0&headers=1&tq=' + queryString);
-                            		fishquery.send(handleQueryResponse);
-                            	} 
-                             
-                                function handleQueryResponse(response) {
-                                    if (response.isError()) {
-                                        alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
-                                        return;
+                                    let dashboardRiver = "<%=river.name%>";
+                                    
+                                    google.charts.load('current');
+                                    google.charts.setOnLoadCallback(drawTable);
+                                	  
+                                	function drawTable() {
+                                		var queryString = encodeURIComponent(`SELECT A, B WHERE B="${dashboardRiver}"`);
+                                		var fishquery = new google.visualization.Query('https://docs.google.com/spreadsheets/d/1yedDqFS59PIHnOYWYy8tNnLEbHBWVQ_GZxtGOuRkDzQ/gviz/tq?gid=0&headers=1&tq=' + queryString);
+                                		fishquery.send(handleQueryResponse);
+                                	} 
+                                 
+                                    function handleQueryResponse(response) {
+                                        if (response.isError()) {
+                                            alert('Error in query: ' + response.getMessage());response.getDetailedMessage();
+                                            return;
+                                        }
+                                        
+                                        var data = response.getDataTable();
+                                		var lastStocked = data.wg[0].c[0].f;
+                                		
+                                        //Write date into <td> cell
+                                		document.getElementById("<%=river._id%>-stocked").textContent = lastStocked;
+
                                     }
-                            
-                            		var data = response.getDataTable();
-                            		var lastStocked = data.wg[0].c[0].f;
-                            		console.log(data);
-                            		console.log(dashboardRiver + " last stocked on: " + lastStocked);
-                            		document.getElementById("<%=river._id%>-stocked").textContent = lastStocked;
-                            // 		let span = document.querySelectorAll("span");
-                            // 		span.innerHTML = lastStocked;
-                            		
-                            // 		document.getElementById("myspan").textContent="newtext";
-                                }
-                            })();
+                                })();
+                            </script>
+                        </td>
+                        
+                        <!-- Link to River Show Route -->
+                        <td>
+                            <a href="/rivers/<%= river._id %>" class="btn btn-primary">More Info</a>
+                        </td>
+                    </tr>
+            <% }); /* rivers.forEach() */ %>
+            </tbody>
+        </table>
+    </div> <!-- .table-responsive -->
 
-
-                        </script>
-                    
-                    </td>   
-                    <td>
-                     <a href="/rivers/<%= river._id %>" class="btn btn-primary">More Info</a>
-                     </td>
-        
-                </tr>
-            <% }); %>
-        </tbody>
-    </table>
-</div>
-
-<button type="button" class="btn btn-primary btn-block">+ Add New River</button>
-</div>
+    <button type="button" class="btn btn-primary btn-block">+ Add New River</button>
+    
+</div> <!-- container -->
 
 <% include ../partials/footer %>
