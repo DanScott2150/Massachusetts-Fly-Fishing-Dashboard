@@ -46,17 +46,17 @@
                         
                         <!-- River Weather for Today -->
                         <td>
-                            <svg width="50px" height="50px">
-                                <use xlink:href="#<%=weatherDashboard[river.name].daily.data[0].icon%>" />
+                            <svg width="30px" height="30px">
+                                <use xlink:href="#<%= weatherDashboard[river.name].daily.data[0].icon %>" />
                             </svg><br/>
                             <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMax) %><br/>
                             <b>L:</b> <%= Math.round(weatherDashboard[river.name].daily.data[0].temperatureMin) %>
-                        </td>
+                            </td>
                         
                         <!-- Populate River Weather forecast for upcoming week -->
                         <% for (let i=1; i<8; i++){ %>
                             <td>
-                                <svg width="50px" height="50px">
+                                <svg width="30px" height="30px">
                                     <use xlink:href="#<%=weatherDashboard[river.name].daily.data[i].icon%>" />
                                 </svg><br/>
                                 <b>H:</b> <%= Math.round(weatherDashboard[river.name].daily.data[i].temperatureMax) %><br/>
@@ -112,7 +112,7 @@
                         
                         <!-- Link to River Show Route -->
                         <td>
-                            <a href="/rivers/<%= river._id %>" class="btn btn-primary">More Info</a>
+                            <a href="/rivers/<%= river._id %>" class="btn btn-success">More Info</a>
                         </td>
                     </tr>
             <% }); /* rivers.forEach() */ %>
@@ -120,8 +120,7 @@
         </table>
     </div> <!-- .table-responsive -->
 
-    <button type="button" class="btn btn-primary btn-block">+ Add New River</button>
-    
+    <a class="btn btn-primary btn-block" href="/rivers/new" role="button">+ Add New River</a>
 </div> <!-- container -->
 
 <% include ../partials/footer %>

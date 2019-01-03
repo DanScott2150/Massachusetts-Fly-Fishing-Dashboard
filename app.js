@@ -23,8 +23,10 @@ var methodOverride = require("method-override");    //To support HTTP 'put' & 'd
 app.use(methodOverride("_method"));
 
 //Seed database with dummy data for development purposes. Deletes all existing and then repopulates
-// var seedDB = require("./seeds");
-// seedDB();
+var seedDB = require("./seeds");
+seedDB();
+
+
 
 /////////////////
 //Journal Routes
@@ -66,9 +68,14 @@ app.post("/rivers/:id/journals/", function(req, res){
 //End of Journal Routes
 
 
+
+
 //////////////////////
 //Dashboard Route (main page of app)
 ////////////////////
+
+
+
 
 //Middleware functions generate data (via API calls) for dashboard table
 app.get("/", middleware.dashboardWeather2, middleware.dashboardUSGS, function(req, res){
@@ -86,9 +93,10 @@ app.get("/", middleware.dashboardWeather2, middleware.dashboardUSGS, function(re
 });
 
 
+
 //Routes
-//app.use("/", indexRoutes);                        //Currently empty.
-//app.use("/rivers/:id/journals", journalRoutes);   //Currently empty
+app.use("/", indexRoutes);                        //Currently empty.
+app.use("/rivers/:id/journals", journalRoutes);   //Currently empty
 app.use("/rivers", riverRoutes);
 
 //Launch server

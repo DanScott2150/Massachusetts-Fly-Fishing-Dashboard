@@ -33,6 +33,7 @@ function seedDB(){
     //Remove all existing data:
     River.remove({}, function(err){
         if(err){console.log(err)}
+        console.log("Existing Rivers wiped");
         
     //Create a new 'River' for each object in seed data[] array
         data.forEach(function(seed){

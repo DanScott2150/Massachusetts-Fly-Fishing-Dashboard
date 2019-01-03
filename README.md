@@ -1,8 +1,6 @@
-Fishing Journal for keeping track of outings, research, other info, etc.
+Fishing Dashboard Project
 
 
-To Do:
-B
 
 
 # USGS river flow data (via USGS API)
@@ -203,6 +201,3 @@ Does not include geocoding capabilities, need to find separate solution
 
 DarkSky API called as Middleware for River show route
 Stores JSON weather data in req.-variable, which gets passed into show.ejs
-
-    
-    

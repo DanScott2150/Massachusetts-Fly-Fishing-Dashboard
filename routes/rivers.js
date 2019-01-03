@@ -5,6 +5,38 @@ var express     = require("express"),
     River       = require("../models/river"),
     middleware  = require("../middleware");
 
+// RIVER NEW ROUTE
+    router.get("/new", function(req, res){
+        // res.send("New River route");
+        res.render("rivers/new");
+    });
+    
+// RIVER CREATE ROUTE
+    router.post("/", function(req, res){
+        var name = req.body.name,
+            lat = req.body.lat,
+            lng = req.body.lng,
+            location = req.body.location,
+            description = req.body.description,
+            usgs = req.body.usgs;
+    
+        var newRiver = {
+                name:name, 
+                location:location, 
+                lat:lat, 
+                lng:lng, 
+                usgsID:usgs, 
+                description: description
+            };
+
+        River.create(newRiver, function(err, newlyCreated){
+            if(err){console.log(err)} 
+            else {
+                res.redirect("/");
+            }
+        });
+    });
+
 // RIVER SHOW ROUTE
 // Individual river page. Gets weather forecast & USGS data via middleware
     router.get("/:id", middleware.findWeather, middleware.usgsData, function(req, res){
@@ -56,35 +88,8 @@ var express     = require("express"),
         });
     });
 
-// RIVER NEW ROUTE
-    router.get("/new", function(req, res){
-        res.render("rivers/new");
-    });
 
-// RIVER CREATE ROUTE
-    router.post("/", function(req, res){
-        var name = req.body.name,
-            lat = req.body.lat,
-            lng = req.body.lng,
-            location = req.body.location,
-            description = req.body.description,
-            usgs = req.body.usgs;
-    
-        var newRiver = {
-                name:name, 
-                location:location, 
-                lat:lat, 
-                lng:lng, 
-                usgsID:usgs, 
-                description: description
-            };
 
-        River.create(newRiver, function(err, newlyCreated){
-            if(err){console.log(err)} 
-            else {
-                res.redirect("/");
-            }
-        });
-    });
+
 
 module.exports = router;

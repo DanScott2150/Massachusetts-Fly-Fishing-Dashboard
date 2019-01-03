@@ -7,73 +7,112 @@
         
         <!-- Sidebar Nav -->
         <div class="col-md-3" id="sidebar-sticky">
-            <p class="lead">River Dashboard</p>
+            <div class="panel panel-primary">
+                            <div class="panel-heading">
+            <h1 class="text-center"><%=river.name%></h1>
+            </div>
             
             <div class="list-group" id="river-menu">
                 <nav>
                     <ul class="nav" role="tablist">
-                        <li class="list-group-item active"><%=river.name%></li>
-                        <li class="list-group-item"><a href="#weather">Weather</a></li>
-                        <li class="list-group-item"><a href="#usgs">Flow Rates</a></li>
-                        <li class="list-group-item"><a href="#stocking">Stocking Report</a></li>
-                        <li class="list-group-item"><a href="#outings">Past Outings</a></li>
-                        <li class="list-group-item"><a href="#map">Map</a></li>
-                        
+                        <li class="list-group-item list-group-item-info active"><a href="#weather">Weather</a></li>
+                        <li class="list-group-item list-group-item-info"><a href="#usgs">Flow Rates</a></li>
+                        <li class="list-group-item list-group-item-info"><a href="#stocking">Stocking Report</a></li>
+                        <li class="list-group-item list-group-item-info"><a href="#outings">Past Outings</a></li>
+                        <li class="list-group-item list-group-item-info"><a href="#map">Map</a></li>
+                    </ul>
+                    <ul class="nav">
+                        <li class="list-group-item">Home Dashboard</li>
+                        <li class="list-group-item">Edit River</li>
                     </ul>
                 </nav>
             </div> <!-- list-group -->
+        </div>
         </div>
         <!-- End Sidebar -->
 
         <!-- Main section -->
         <div class="col-md-9">
             
-            <div class="thumbnail">
-                <div class="caption-full">
-                    <h4><%= river.name %></h4>
-                    <h5><%= river.location %></h5>
-                </div>
-            </div>
+            <!--<div class="thumbnail">-->
+            <!--    <div class="caption-full">-->
+            <!--        <h4><%= river.name %></h4>-->
+            <!--        <h5><%= river.location %></h5>-->
+            <!--    </div>-->
+            <!--</div>-->
             
         <!-- Weather -->
-            <div class="thumbnail"  id="weather">
+            <div class="panel panel-info"  id="weather">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Weather</h3>
+                </div>
+                <div class="panel-body">
                 <div class="container-fluid">
                     <div class="row">
                         <% include ../partials/weather %>    
                     </div>
                 </div>
+                </div>
+                <div class="panel-footer text-right"><small><em>Weather Data Powered by DarkSky API</em></small></div>
             </div>
         <!-- end Weather -->
 
         <!-- USGS river flow data -->            
-            <div class="thumbnail" id="usgs">
-                <style>
-                    /* TODO: better way than quick fix below */
-                    .thumbnail img{
-                        width: 576px;
-                    }
-                </style>
+            <div class="panel panel-info" id="usgs">
+<style>
+/* TODO: better way than quick fix below */
+.panel img{
+width: 576px;
+height: 100%;
+}
+</style>
+                <div class="panel-heading">
+                    <h2 class="panel-title">River Conditions</h3>
+                </div>
                 
-                <p>USGS Data Location: <%= usgsData.value.timeSeries[0].sourceInfo.siteName %> | River ID: <%= river.usgsID %></p>
-                <p>Current Flow: <%= usgsData.value.timeSeries[0].values[0].value[0].value %></p>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-6" style="padding-left:0px; padding-right:0px">
+                          <h2>Current Flow</h2>
+                          <h3><%= usgsData.value.timeSeries[0].values[0].value[0].value %> cf/s<br/>
+                          <small>as of <%= new Date(usgsData.value.timeSeries[0].values[0].value[0].dateTime).toLocaleTimeString([], {weekday: 'short', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}); %></small></h3>
+                            
+                
                 <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060" width="288" height="200"/> 
+            </div> <!-- col-md-6-->
+                        
+<div class="col-md-6">
+    <p>USGS Data Location: <%= usgsData.value.timeSeries[0].sourceInfo.siteName %> (<%=usgsData.value.timeSeries[0].sourceInfo.siteCode[0].value%>)  | River ID: <%= river.usgsID %></p>
+    Dropdown menu
+    </div>
+             </div>
+                </div>
+            </div>
             </div>
         <!-- end of USGS -->
 
         <!-- Trout Stocking -->
-            <div class="thumbnail"  id="stocking">
+            <div class="panel panel-info" id="stocking">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Trout Stocking</h3>
+                </div>
+                                <div class="panel-body">
                 <div class="container-fluid">
                     <div class="row">
                         <% include ../partials/stocking %> 
                     </div>
                 </div>
+                </div>
             </div>
         <!-- END trout stocking -->
         
         <!-- Journal Entries -->
-            <div class="well section" id="outings">
-                <h4>Trip Journal</h4>
-                
+            <div class="panel panel-info" id="outings">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Trip Journal</h3>
+                </div>
+                                <div class="panel-body">
                 <p>
                     <a class="btn btn-success" href="/rivers/<%=river._id%>/journals/new">+ Add New Journal Entry</a>
                 </p>
@@ -95,38 +134,47 @@
                     </p>
                     
                 <% }); /* river.journals.forEach() */ %>
+                </div>
             </div>
         <!-- End Journal Entries -->
         
         <!-- MAP -->
-        
-            <div id='map' style='width: 100%; height: 500px;'></div>
-            
-            <script>
-                //pass river lat/lng from server-side to client-side
-                //is there a better way to do this?
-                var mapCenter = [<%=river.lng%>, <%=river.lat%>];
-            </script>
-
-            <!-- MapBox API -->
-            <script type="text/javascript" src="../js/mapbox-show.js"></script>
-            
-            <!-- Notes to myself/plan for the future -->
-            <div class="thumbnail">
-                <div class="container-fluid">
-                    <div class="row">
-                        <h4>Map</h4>
-                        <p>Coming soon: Map view</p>
-                        <p>Planned feature, user can customize map to:</p>
-                        <ul>
-                            <li>Mark specific fishing holes (i.e. Swift y-pool/cadylane/etc; Millers wendelldepot/bearsden/etc</li>
-                            <li>Mark parking/access spots?</li>
-                            <li>Mark trout stocking points? (think specific location data available somewhere via Mass DFW data)</li>
-                            <li>Mark nearby camping options?</li>
-                        </ul>
+            <div class="panel panel-info" id="outings">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Map</h3>
+                </div>
+                
+                <div class="panel-body">
+                
+                <div id='map' style='width: 100%; height: 500px;'></div>
+                
+                <script>
+                    //pass river lat/lng from server-side to client-side
+                    //is there a better way to do this?
+                    var mapCenter = [<%=river.lng%>, <%=river.lat%>];
+                </script>
+    
+                <!-- MapBox API -->
+                <script type="text/javascript" src="../js/mapbox-show.js"></script>
+                
+                <!-- Notes to myself/plan for the future -->
+                <div class="thumbnail">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <h4>Map</h4>
+                            <p>Coming soon: Map view</p>
+                            <p>Planned feature, user can customize map to:</p>
+                            <ul>
+                                <li>Mark specific fishing holes (i.e. Swift y-pool/cadylane/etc; Millers wendelldepot/bearsden/etc</li>
+                                <li>Mark parking/access spots?</li>
+                                <li>Mark trout stocking points? (think specific location data available somewhere via Mass DFW data)</li>
+                                <li>Mark nearby camping options?</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-            </div>
+                </div>
+                </div>
         <!-- END map -->
         
         <!-- EDIT/DELETE Routes -->

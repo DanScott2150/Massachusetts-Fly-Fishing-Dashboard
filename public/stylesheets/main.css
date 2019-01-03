@@ -5,11 +5,19 @@ body{
 
 #weather svg{
     display: block;
-    outline: 1px solid blue;
-    width:100px;
-    max-width: 100%;
-    max-height:100px;
-    height: auto;
+    /*width:100px;*/
+    /*max-width: 100%;*/
+    /*max-height:100px;*/
+    /*height: auto;*/
+}
+
+.currentWeather{
+    font-size: 16px;
+    text-align: center;
+}
+
+.currentWeather svg{
+    margin: 0 auto;
 }
 
 .nav .active a{

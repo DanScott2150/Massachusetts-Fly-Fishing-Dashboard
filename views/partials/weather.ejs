@@ -1,51 +1,64 @@
 <!--clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night--> 
 
-<div class="col-md-5">
-    <h2>Current Weather</h2>
-    
+<div class="col-md-6" style="padding-left:0px; padding-right:0px">
+    <h2 style="margin-top:10px; text-align: center;">Current Weather<br/>
+    <small><%=river.location%></small></h2>
+
     <!-- Display weather icon SVG -->
     <!-- 'icon' is a datapoint returned from the darksky API call -->
-    <div>
-        <svg width="100px" height="100px">
+    <div class="currentWeather">
+        <svg width="150px" height="150px">
           <use xlink:href="#<%=weather.currently.icon%>" />
         </svg>
-    </div>
 
-    <p><strong>Current Temperature: </strong><%= Math.round(weather.currently.temperature) %>&#176F</p>
+
+    <p style="margin-top:10px;"><strong>Current Temperature: </strong><%= Math.round(weather.currently.temperature) %>&#176F<br/>
+    <small>Feels like: <%= Math.round(weather.currently.apparentTemperature) %>&#176F</small><br/>
+   </p>
     <p><%= weather.currently.summary %>. <%= weather.hourly.summary %></p>
-    <p><strong>High: </strong><%= Math.round(weather.daily.data[0].temperatureHigh) %>&#176F | 
-       <strong>Low: </strong><%= Math.round(weather.daily.data[0].temperatureLow) %>&#176F</p>
+    
+    <p>Wind: <%= Math.round(weather.currently.windSpeed) %> MPH with gusts to <%= Math.round(weather.currently.windGust) %> MPH</p>
+    
+    <div style-"margin-bottom:10px;">
+        <div style="width:50%; padding-right: 10px; text-align:right; float:left; border-right:2px solid gray"><strong>High: </strong><%= Math.round(weather.daily.data[0].temperatureHigh) %>&#176F</div>
+        <div style="width:50%; padding-left: 10px; text-align:left; float:right;"><strong>Low: </strong><%= Math.round(weather.daily.data[0].temperatureLow) %>&#176F</div>
+    </div>
+    <div style="clear:both; height:10px;"></div>
+    <div style="">
+        <div style="width:50%; padding-right: 10px; text-align:right; float:left; border-right:2px solid gray"><strong>Sunrise: </strong>
+        <%= new Date(weather.daily.data[0].sunriseTime * 1000 - 14400000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %></div>
+        <div style="width:50%; padding-left: 10px; text-align:left; float:right;"><strong>Sunset: </strong>
+        <%= new Date(weather.daily.data[0].sunsetTime * 1000 - 14400000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %></div>
+    </div>
+  
 
 <!-- TODO: Sunrise/Sunset times are wrong. Originally made a manual quickfix to adjust for daylight savings time,
     but now it's off by a lot more than an hour. Need to revisit sometime. -->
-    <p>
-        <strong>Sunrise: </strong>
-            <%= new Date(weather.daily.data[0].sunriseTime * 1000 - 14400000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %> |
-        <strong>Sunset: </strong>
-            <%= new Date(weather.daily.data[0].sunsetTime * 1000 - 14400000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %>
-    </p>
-</div> <!-- col-md-5 -->
+
+    
+        </div>
+</div> <!-- col-md-6-->
                         
-<div class="col-md-7">
-    <ul class="list-unstyled list-group">
-        <% for(var i=1; i<=5; i++) {%>
+<div class="col-md-6">
+    <ul class="list-unstyled list-group" style="margin-bottom:0px;">
+        <% for(var i=1; i<=7; i++) {%>
         <% /* Begin var i at 1 weather.daily.data[0] is current day, and we want to begin with tomorrow */ %>
             <li class="list-group-item">
                 <div style="display:inline-block; width: 70%;">
-                    <p>
+                    <p style="margin-bottom:0">
                         <!-- Print day name -->
                         <% let weekday = new Date(weather.daily.data[i].time * 1000); %>
-                        <%= weekday.toLocaleDateString([], {weekday: 'long'}); %>: 
+                        <strong><%= weekday.toLocaleDateString([], {weekday: 'long'}); %>: </strong>
                         H: <%= Math.round(weather.daily.data[i].temperatureHigh) %>&#176F / L: <%= Math.round(weather.daily.data[i].temperatureLow) %>&#176F
                     </p>
-                    <p>
+                    <p style="margin-bottom:0">
                         <!-- Print daily summary -->
                         <%= weather.daily.data[i].summary %>
                     </p>
                 </div>
                 <div style="float: right;">
-                   <div style="height:40px; width: 40px; border:1px dotted #000;">
-                       <svg width="100px" height="100px">
+                   <div style="height:40px; width: 40px;">
+                       <svg width="40px" height="40px">
                             <use xlink:href="#<%=weather.daily.data[i].icon%>" />
                         </svg>
                     </div> <!-- icon -->
