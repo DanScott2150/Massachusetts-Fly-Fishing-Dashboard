@@ -40,10 +40,10 @@
 </div> <!-- col-md-6-->
                         
 <div class="col-md-6">
-    <ul class="list-unstyled list-group" style="margin-bottom:0px;">
+    <ul class="list-unstyled list-group bg-warning" style="margin-bottom:0px; border:1px solid #ddd; border-radius: 4px; padding:10px 15px;">
         <% for(var i=1; i<=7; i++) {%>
         <% /* Begin var i at 1 weather.daily.data[0] is current day, and we want to begin with tomorrow */ %>
-            <li class="list-group-item">
+            <li class="list-group-item" style="background: inherit; border: 0; padding:0px;">
                 <div style="display:inline-block; width: 70%;">
                     <p style="margin-bottom:0">
                         <!-- Print day name -->
@@ -63,6 +63,9 @@
                         </svg>
                     </div> <!-- icon -->
                 </div> <!-- float:right container div -->
+                <% if(i < 7){ %>
+                <hr style="margin-top:5px; margin-bottom: 5px;" />
+                <% } %>
             </li>
         <% } %> <!-- for loop to print 5-day forecast -->
 

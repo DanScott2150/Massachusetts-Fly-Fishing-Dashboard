@@ -3,6 +3,14 @@ body{
     position: relative;
 }
 
+#river-menu a{
+    padding: 0;
+}
+
+#side-menu-bottom a{
+    padding: 0;
+}
+
 #weather svg{
     display: block;
     /*width:100px;*/
@@ -14,6 +22,10 @@ body{
 .currentWeather{
     font-size: 16px;
     text-align: center;
+}
+
+#filterTown_div{
+    display:none;
 }
 
 .currentWeather svg{

@@ -7,27 +7,32 @@
         
         <!-- Sidebar Nav -->
         <div class="col-md-3" id="sidebar-sticky">
-            <div class="panel panel-primary">
+            <div class="panel panel-info">
                             <div class="panel-heading">
-            <h1 class="text-center"><%=river.name%></h1>
+            <h1 class="text-center" style="color:black;"><%=river.name%></h1>
             </div>
             
             <div class="list-group" id="river-menu">
                 <nav>
                     <ul class="nav" role="tablist">
-                        <li class="list-group-item list-group-item-info active"><a href="#weather">Weather</a></li>
-                        <li class="list-group-item list-group-item-info"><a href="#usgs">Flow Rates</a></li>
-                        <li class="list-group-item list-group-item-info"><a href="#stocking">Stocking Report</a></li>
-                        <li class="list-group-item list-group-item-info"><a href="#outings">Past Outings</a></li>
-                        <li class="list-group-item list-group-item-info"><a href="#map">Map</a></li>
-                    </ul>
-                    <ul class="nav">
-                        <li class="list-group-item">Home Dashboard</li>
-                        <li class="list-group-item">Edit River</li>
+                        <li class="list-group-item active"><a href="#weather"><span class="glyphicon glyphicon-certificate" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Weather</a></li>
+                        <li class="list-group-item"><a href="#usgs"><span class="glyphicon glyphicon glyphicon-tint" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Flow Rates</a></li>
+                        <li class="list-group-item"><a href="#stocking"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Stocking Report</a></li>
+                        <li class="list-group-item"><a href="#outings"><span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Notes & Research</a></li>
+                        <li class="list-group-item"><a href="#map"><span class="glyphicon glyphicon glyphicon-globe" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Map</a></li>
                     </ul>
                 </nav>
-            </div> <!-- list-group -->
+
+
+
         </div>
+                    </div> <!-- list-group -->
+ 
+                
+                    <ul class="nav" id="side-menu-bottom">
+                        <li class="list-group-item"><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Dashboard</a></li>
+                        <li class="list-group-item"><a href="/rivers/<%= river._id %>/edit"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>&nbsp;&nbsp;&nbsp;Edit River</a></li>
+                    </ul>
         </div>
         <!-- End Sidebar -->
 
@@ -73,23 +78,50 @@ height: 100%;
                 <div class="panel-body">
                     <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-6" style="padding-left:0px; padding-right:0px">
-                          <h2>Current Flow</h2>
-                          <h3><%= usgsData.value.timeSeries[0].values[0].value[0].value %> cf/s<br/>
-                          <small>as of <%= new Date(usgsData.value.timeSeries[0].values[0].value[0].dateTime).toLocaleTimeString([], {weekday: 'short', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}); %></small></h3>
+                        <div class="col-md-5" style="padding-left:0px; padding-right:0px">
+                            <h2 style="margin-top:10px; text-align: center;">Current River Flow<br/>
+                            <small><%= usgsData.value.timeSeries[0].sourceInfo.siteName %></small></h2>
                             
+                          <div style="padding:10px; border:1px solid #ddd; border-radius:4px;" class="bg-warning">
+                          <h3 style="text-align:center; margin:0;"><%= usgsData.value.timeSeries[0].values[0].value[0].value %> cf/s
+                          <small>as of <%= new Date(usgsData.value.timeSeries[0].values[0].value[0].dateTime).toLocaleTimeString([], {weekday: 'short', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'}); %></small></h3>
+                            <div class="alert alert-danger" role="alert" style="margin:10px 0px 0px; padding:5px;"><em>[###] higher than average for today</em></div>
+                            </div>
                 
-                <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060" width="288" height="200"/> 
+               
             </div> <!-- col-md-6-->
                         
-<div class="col-md-6">
-    <p>USGS Data Location: <%= usgsData.value.timeSeries[0].sourceInfo.siteName %> (<%=usgsData.value.timeSeries[0].sourceInfo.siteCode[0].value%>)  | River ID: <%= river.usgsID %></p>
-    Dropdown menu
-    </div>
+<div style="float: right; background: #f5f5f5; border:1px solid #ddd; border-radius: 4px; padding:10px 15px;">
+USGS Data Location: 
+<div class="dropdown">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <%= usgsData.value.timeSeries[0].sourceInfo.siteName %> (<%=usgsData.value.timeSeries[0].sourceInfo.siteCode[0].value%>)
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    <li class="disabled"><a href="#">[Other USGS Data Station on Same River]</a></li>
+    <li class="disabled"><a href="#">[Other USGS Data Station on Same River]</a></li>
+    <li class="disabled"><a href="#">[Other USGS Data Station on Same River]</a></li>
+  </ul>
+</div>
+
+</div>
+
+
+
              </div>
-                </div>
-            </div>
-            </div>
+             <hr/>
+             <div class="row">
+                 <div class="col" style="text-align: center;">
+                     <h2 style="margin-top:10px; text-align: center;">USGS Data Chart<br/></h2>
+                      <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060" style="margin:0 auto;"/> 
+
+                 </div>
+             </div>
+                </div> <!-- container -->
+            </div> <!-- panel-body -->
+            <div class="panel-footer text-right"><small><em>River Data from USGS.gov</em></small></div>
+            </div> <!-- panel -->
         <!-- end of USGS -->
 
         <!-- Trout Stocking -->
@@ -104,17 +136,18 @@ height: 100%;
                     </div>
                 </div>
                 </div>
+                <div class="panel-footer text-right"><small><em>Stocking Data via Massachusetts DFW</em></small></div>
             </div>
         <!-- END trout stocking -->
         
         <!-- Journal Entries -->
             <div class="panel panel-info" id="outings">
                 <div class="panel-heading">
-                    <h2 class="panel-title">Trip Journal</h3>
+                    <h2 class="panel-title">Notes & Research</h3>
                 </div>
                                 <div class="panel-body">
                 <p>
-                    <a class="btn btn-success" href="/rivers/<%=river._id%>/journals/new">+ Add New Journal Entry</a>
+                    <a class="btn btn-success" href="/rivers/<%=river._id%>/journals/new">+ Add New Entry</a>
                 </p>
             
                 <% river.journals.forEach(function(journal){ %>
@@ -177,16 +210,6 @@ height: 100%;
                 </div>
         <!-- END map -->
         
-        <!-- EDIT/DELETE Routes -->
-            <div class="well">
-                <a class="btn btn-warning" href="/rivers/<%= river._id %>/edit">Edit</a>
-                <form class="delete-form" action="/rivers/<%= river._id%>?_method=DELETE" method="POST">
-                    <button class="btn btn-danger">Delete</button>
-                </form>
-            </div>
-            
-            
-
         </div> <!-- col-md-9 -->
         <!-- END of Main Section -->
         

@@ -13,13 +13,12 @@
 <!-- END google charts API -->
 
 <div class="col">
-    <h2>Trout Stocking</h2>
-    <p>Trout Stocking report for <%= river.name %></p>
+<h2 style="margin-top:10px; text-align: center;">Trout Stocking Report <small>for <%= river.name %></small></h2>
     
     <!-- Dashboard populated via Google Charts script -->
 	<div id="dashboard_div">
-		<div id="filter_div" class="filter" style="display:none"></div>
-			Filter by Town: <div id="filterTown_div" class="filter"></div>
+		<div id="filter_div" class="filter" style="display:none"></div> <!-- hide Waterbody filter -->
+			<!-- Filter by Town: --> <div id="filterTown_div" class="filter"></div>
 		<div id="trout_table"></div>
 	</div>
 
