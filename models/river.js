@@ -14,6 +14,12 @@ var riverSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Journal"
         }
+    ],
+    mapMarkers: [         //Map markers on given map: used to mark fishing spots, parking spots, etc.
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "MapMarker"
+        }
     ]
 });
 

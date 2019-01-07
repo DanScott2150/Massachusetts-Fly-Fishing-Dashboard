@@ -1,7 +1,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuc2NvdHQyMTUwIiwiYSI6ImNqa3d1dGRtMjAweTQzcW1tb2R1cmNsY3QifQ.J7IvUUi46-D3JkY6klKNDg';
 var map = new mapboxgl.Map({
     container: 'map',
-    style: 'mapbox://styles/mapbox/streets-v9'
+    style: 'mapbox://styles/mapbox/terrain-v9'
 });
 
 var map = new mapboxgl.Map({
@@ -24,16 +24,16 @@ map.on('click', function(e){
 // console.log(JSON.stringify(features[0], null, 2));
 
 // console.log(features);
-   new mapboxgl.Marker()
-   .setLngLat(e.lngLat)
-   .addTo(map);
+//   new mapboxgl.Marker()
+//   .setLngLat(e.lngLat)
+//   .addTo(map);
 });
 
- var popup = new mapboxgl.Popup()
-    .setHTML('');
+//  var popup = new mapboxgl.Popup()
+//     .setHTML('');
     
 
-var marker = new mapboxgl.Marker()
-.setLngLat(mapCenter)
-.setPopup(popup)
-.addTo(map);
+// var marker = new mapboxgl.Marker()
+// .setLngLat(mapCenter)
+// .setPopup(popup)
+// .addTo(map);

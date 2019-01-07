@@ -23,10 +23,17 @@ var methodOverride = require("method-override");    //To support HTTP 'put' & 'd
 app.use(methodOverride("_method"));
 
 //Seed database with dummy data for development purposes. Deletes all existing and then repopulates
-// var seedDB = require("./seeds");
-// seedDB();
+var seedDB = require("./seeds");
+seedDB();
 
 
+app.get('/maptest', function(req, res){
+    res.render('maptest');
+});
+
+app.get('/gmaps', function(req, res){
+    res.render('gmapstest');
+});
 
 /////////////////
 //Journal Routes
@@ -91,6 +98,7 @@ app.get("/", middleware.dashboardWeather2, middleware.dashboardUSGS, function(re
         }
     });
 });
+
 
 
 

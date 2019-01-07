@@ -12,7 +12,9 @@
     
 */
 
-// <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDHwdkHGOv55partXLb5M5A_-uY0opL8Qg&callback=initMap"></script>
+console.log("GMAPS TEST");
+
+
 function initMap(){
 
 // Create map {ideally outline MA, but sounds like that's more trouble than it's worth

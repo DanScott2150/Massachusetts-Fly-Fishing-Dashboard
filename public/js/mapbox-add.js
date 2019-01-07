@@ -12,7 +12,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiZGFuc2NvdHQyMTUwIiwiYSI6ImNqa3d1dGRtMjAweTQzc
 
 var map = new mapboxgl.Map({
     container: 'map',   //Corresponding div #id on ejs file
-    style: 'mapbox://styles/mapbox/streets-v9', //other style: outdoors-v10; maybe look into tweaking in MapBox studio?
+    style: 'mapbox://styles/danscott2150/cjqldgl1yo5ig2srqrfsryrdj', //other style: outdoors-v10; maybe look into tweaking in MapBox studio?
     
     //Set default view to state of MA
     center: [-72.0000, 42.4072],
@@ -25,6 +25,7 @@ var nav = new mapboxgl.NavigationControl();
 
 //When user clicks on a river, find the lat/lng and the Name
 map.on('click', function(e){
+    
 
     //Search within a 100 x/y radius to see if there's a River with a 'waterway-label'
     var width = 100;

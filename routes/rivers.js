@@ -41,17 +41,20 @@ var express     = require("express"),
 // Individual river page. Gets weather forecast & USGS data via middleware
     router.get("/:id", middleware.findWeather, middleware.usgsData, function(req, res){
     //Lookup River, and populate any Journal Entries associated with it:
-        River.findById(req.params.id).populate("journals").exec(function(err, currentRiver){
-            if(err){
-                console.log(err);
-            } else {
-                res.render("rivers/show", {
-                    river: currentRiver, 
-                    weather: res.locals.weatherData, 
-                    usgsData: res.locals.usgsData
-                });
-            }
-        });
+        River.findById(req.params.id)
+            .populate("journals")
+            .populate("mapMarkers")
+            .exec(function(err, currentRiver){
+                if(err){
+                    console.log(err);
+                } else {
+                    res.render("rivers/show", {
+                        river: currentRiver, 
+                        weather: res.locals.weatherData, 
+                        usgsData: res.locals.usgsData
+                    });
+                }
+            });
     });
 
 // RIVER EDIT ROUTE

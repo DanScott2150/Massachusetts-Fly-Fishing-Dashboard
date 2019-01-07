@@ -3,6 +3,7 @@
 var mongoose = require("mongoose");
 var River = require("./models/river");
 //var Journal = require("./models/journal");
+var MapMarker = require('./models/mapmarker');
 
 //Define data
 var data = [
@@ -41,6 +42,22 @@ function seedDB(){
                 if(err){console.log(err)} 
                 else {
                     console.log("River created via seedDB()");
+                                                MapMarker.create(
+                                {
+                                        lat: 42.5959,
+    lng: 72.2267,
+    type: "Parking",
+    title: "Bearsden Parking",
+    text: "10-minute hike to Bearsden"
+                                }, function(err, marker){
+                                    if(err){
+                                        console.log(err);
+                                    } else {
+                                        river.mapMarkers.push(marker);
+                                        river.save();
+                                        console.log("Created new map marker");
+                                    }
+                                });
                 }
             });
         });
