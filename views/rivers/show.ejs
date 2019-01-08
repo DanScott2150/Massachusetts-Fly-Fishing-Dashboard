@@ -182,9 +182,11 @@ USGS Data Location:
                 <div id='map' style='width: 100%; height: 500px;'></div>
                 
                 <script>
-                                    //pass river lat/lng from server-side to client-side
+                    //pass river lat/lng from server-side to client-side
                     //is there a better way to do this?
+                    var riverID =   '<%= river._id %>';
                     var mapCenter = [<%=river.lng%>, <%=river.lat%>];
+
                 </script>
 
     
@@ -194,22 +196,29 @@ USGS Data Location:
                 
                 <script>
 
-
-                    <% river.mapMarkers.forEach(function(marker){ %>
+                    //Populate saved markers from database
+                    <% river.mapMarkers.forEach(function(marker){ console.log("Markers: " + marker); %>
                     
-                        let type = "<%= marker.type %>";
-                        let title = "<%= marker.title %>";
-                        let text = "<%= marker.text %>";
-                    
-                        let popup = new mapboxgl.Popup().setHTML(`
-                            <h1>Type: ${type}</h1>
-                            <strong>Title: ${title}</strong>
-                            <p>${text}</p>`);
+                        (function createMarker(){
+                        
+                     
+                              // create a HTML element for each feature
+                              var el = document.createElement('div');
+                              el.className = 'marker';
+                              el.innerHTML = "<span class='glyphicon glyphicon-tent' aria-hidden='true'></span>";
 
-                        let newMarker = new mapboxgl.Marker()
-                            .setLngLat(mapCenter)
-                            .setPopup(popup)
-                            .addTo(map);
+                            let title = "<%= marker.title %>";
+                            let description = "<%= marker.description %>";
+                    
+                            let popup = new mapboxgl.Popup().setHTML(`
+                                <strong>Title: ${title}</strong>
+                                <p>${description}</p>`);
+
+                            let newMarker = new mapboxgl.Marker(el)
+                                .setLngLat([<%=marker.lng%>,<%=marker.lat%>])
+                                .setPopup(popup)
+                                .addTo(map);
+                        })();
 
                     <% }); %>
                 </script>

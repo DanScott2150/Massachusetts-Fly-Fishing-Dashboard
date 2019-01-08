@@ -7,6 +7,7 @@ var express     = require('express'),
 //Schema Models
 var River       = require("./models/river"),
     Journal       = require("./models/journal"),
+    MapMarker   = require('./models/mapmarker'),
     middleware  = require("./middleware");
 
 //Routes
@@ -27,9 +28,23 @@ var seedDB = require("./seeds");
 seedDB();
 
 
-app.get('/maptest', function(req, res){
-    res.render('maptest');
+app.post('/rivers/:id/mapMarkers/', function(req, res){
+    River.findById(req.params.id, function(err, currentRiver){
+        if(err){console.log(err)}
+        else{
+            MapMarker.create(req.body.markerData, function(err, marker){
+                if(err){
+                    console.log(err);
+                } else {
+                    currentRiver.mapMarkers.push(marker);
+                    currentRiver.save();
+                    res.redirect("/rivers/" + currentRiver._id + '#map');
+                }
+            });
+        }
+    });
 });
+
 
 app.get('/gmaps', function(req, res){
     res.render('gmapstest');
