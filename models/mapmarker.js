@@ -7,9 +7,10 @@ var mongoose = require("mongoose");
 var mapMarkerSchema = new mongoose.Schema({
     lat: Number,
     lng: Number,
-    type: String,
+    type: String,           //values: Camping, Fishing Spot, Parking, Other
     title: String,
     description: String
+    // icon: String
 });
 
 module.exports = mongoose.model("MapMarker", mapMarkerSchema);

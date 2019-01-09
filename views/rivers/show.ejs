@@ -179,7 +179,7 @@ USGS Data Location:
                 
                 <div class="panel-body">
                 
-                <div id='map' style='width: 100%; height: 500px;'></div>
+                <div id='map' style='width: 100%; height: 550px;'></div>
                 
                 <script>
                     //pass river lat/lng from server-side to client-side
@@ -192,35 +192,102 @@ USGS Data Location:
     
                 <!-- MapBox API -->
                 <script type="text/javascript" src="../js/mapbox-show.js"></script>
-                
-                
+                <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+                <style>
+                    .marker {
+    font-size: 16px;
+    color: red;
+    border: 1px solid #000;
+    padding: 5px;
+    border-radius: 10px;
+    opacity: 0.9;
+    background: lightblue;
+}
+
+    /*.marker:hover{*/
+    /*    cursor:pointer;*/
+    /*}*/
+
+
+                </style>
                 <script>
-
-                    //Populate saved markers from database
-                    <% river.mapMarkers.forEach(function(marker){ console.log("Markers: " + marker); %>
+                    map.on('load', function(){
+                        console.log("Map onload");
+                        map.addLayer({
+                            "id": "points",
+                            "type": "symbol",
+                            "source": {
+                                "type": "geojson",
+                                "data": {
+                                    "type": "FeatureCollection",
+                                    "features": [
+                                        
+                        //Populate saved markers from database
+                        <% river.mapMarkers.forEach(function(marker){ console.log("Markers: " + marker); %>
+                                        {
+                                            "type": "Feature",
+                                            "properties": {
+                                                "type": "<%= marker.type %>",
+                                                "title": "<%= marker.title %>",
+                                                "description": "<%= marker.description %>",
+                        "icon": "star"
+                                            },
+                                            "geometry": {
+                                                "type": "Point",
+                                                "coordinates": [<%=marker.lng%>,<%=marker.lat%>]
+                                            }
+                                        },
+                        <% }); %>
+                                    ]
+                                }
+                            },
+                             "layout": {
+            "icon-image": "{icon}-15",
+            "icon-allow-overlap": true
+                            }
+                    }); //map.addLayer()
                     
-                        (function createMarker(){
-                        
-                     
-                              // create a HTML element for each feature
-                              var el = document.createElement('div');
-                              el.className = 'marker';
-                              el.innerHTML = "<span class='glyphicon glyphicon-tent' aria-hidden='true'></span>";
+                        // When a click event occurs on a feature in the places layer, open a popup at the
+    // location of the feature, with description HTML from its properties.
+    map.on('click', 'points', function (e) {
+        var coordinates = e.features[0].geometry.coordinates.slice();
+        let type = e.features[0].properties.type;
+        let title = e.features[0].properties.title;
+        var description = e.features[0].properties.description;
 
-                            let title = "<%= marker.title %>";
-                            let description = "<%= marker.description %>";
                     
-                            let popup = new mapboxgl.Popup().setHTML(`
-                                <strong>Title: ${title}</strong>
-                                <p>${description}</p>`);
+                            let popup = `
+                                <h4>${type}</h4>
+                                <strong>${title}</strong>
+                                <p>${description}</p>
+                                <small>
+  <strong>Lat/Lng: </strong> [${Math.floor(e.lngLat.lat*10000)/10000}, ${Math.floor(e.lngLat.lng*10000)/10000}]
+</small>`;
 
-                            let newMarker = new mapboxgl.Marker(el)
-                                .setLngLat([<%=marker.lng%>,<%=marker.lat%>])
-                                .setPopup(popup)
-                                .addTo(map);
-                        })();
+        // Ensure that if the map is zoomed out such that multiple
+        // copies of the feature are visible, the popup appears
+        // over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
 
-                    <% }); %>
+        new mapboxgl.Popup()
+            .setLngLat(coordinates)
+            .setHTML(popup)
+            .addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the places layer.
+    map.on('mouseenter', 'points', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves.
+    map.on('mouseleave', 'points', function () {
+        map.getCanvas().style.cursor = '';
+    });
+    
+                    }); //mapp.onLoad()
                 </script>
                 
                 
@@ -229,14 +296,6 @@ USGS Data Location:
                     <div class="container-fluid">
                         <div class="row">
                             <h4>Map</h4>
-                            <p>Coming soon: Map view</p>
-                            <p>Planned feature, user can customize map to:</p>
-                            <ul>
-                                <li>Mark specific fishing holes (i.e. Swift y-pool/cadylane/etc; Millers wendelldepot/bearsden/etc</li>
-                                <li>Mark parking/access spots?</li>
-                                <li>Mark trout stocking points? (think specific location data available somewhere via Mass DFW data)</li>
-                                <li>Mark nearby camping options?</li>
-                            </ul>
                         </div>
                     </div>
                 </div>

@@ -23,19 +23,24 @@ var map = new mapboxgl.Map({
 var nav = new mapboxgl.NavigationControl();
 map.addControl(nav, 'top-left');
 
-map.on('click', function(e){
-    
-console.log(e);
-// var features = map.queryRenderedFeatures(e.point);
+
+
+map.on('dblclick', function(e){
+  console.log(e);
+    map.flyTo({center: e.lngLat[0]});
+
+var features = map.queryRenderedFeatures(e.point);
 // console.log(JSON.stringify(features[0], null, 2));
 
-// console.log(features);
+console.log(features);
+
+
 
   var popup = new mapboxgl.Popup()
     .setHTML(`<h3>Add New Marker</h3>
 <form action="/rivers/${riverID}/mapMarkers" method="POST">
   <div class="form-group">
-    <select class="form-control">
+    <select class="form-control" name="markerData[type]">
       <option>Fishing Spot</option>
       <option>Parking</option>
       <option>Camping</option>

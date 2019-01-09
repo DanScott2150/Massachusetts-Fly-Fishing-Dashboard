@@ -45,10 +45,11 @@ function seedDB(){
                                                 MapMarker.create(
                                 {
                                         lat: 42.5959,
-    lng: 72.2267,
-    type: "Parking",
-    title: "Bearsden Parking",
-    text: "10-minute hike to Bearsden"
+    lng: -72.2267,
+    type: "Camping",
+    title: "Bearsden Lean-to",
+    description: "10-minute hike to Bearsden",
+    icon: "parking"
                                 }, function(err, marker){
                                     if(err){
                                         console.log(err);
