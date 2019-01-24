@@ -1,0 +1,32 @@
+<!-- Single River: Notes/Research/Journals Section -->
+
+<div class="panel panel-info" id="outings">
+    <div class="panel-heading">
+        <h2 class="panel-title">Notes & Research</h3>
+    </div>
+    
+    <div class="panel-body">
+        <p>
+            <a class="btn btn-success" href="/rivers/<%=river._id%>/journals/new">+ Add New Entry</a>
+        </p>
+    
+        <% river.journals.forEach(function(journal){ %>
+            <% /* For given river, lookup in DB all associated Journal entries */ %>
+    
+            <p>
+                <strong>
+                    <%= 
+                        journal.date.toLocaleString('en-us', { 
+                        timeZone: 'UTC', 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                        }) 
+                    %>
+                </strong> : 
+                <%= journal.text %>
+            </p>
+        <% }); /* river.journals.forEach() */ %>
+    </div>
+</div>

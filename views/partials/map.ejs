@@ -1,0 +1,122 @@
+<div class="panel panel-info" id="outings">
+    <div class="panel-heading">
+        <h2 class="panel-title">Map</h3>
+    </div>
+
+    <div class="panel-body">
+    
+        <div id='map' style='width: 100%; height: 550px;'></div>
+    
+   <script>
+           
+            var riverID =   '<%= river._id %>';
+            
+            
+      var map;
+      function initMap() {
+          let lat = <%= river.lat %>;
+          let lng = <%= river.lng %>;
+
+            map = new google.maps.Map(document.getElementById('map'), {
+              center: {lat: lat, lng: lng},
+              zoom: 8,
+              disableDoubleClickZoom: true,
+              mapTypeId: "terrain"
+            });
+            
+            <% for(i=0; i<river.mapMarkers.length; i++){ %>
+
+                new google.maps.Marker({
+                    position: {lat: <%=river.mapMarkers[i].lat%>, lng: <%=river.mapMarkers[i].lng%>},
+                    map: map
+                })
+                .addListener('click', function(){
+                    console.log("<%= river.mapMarkers[i].title %>");
+                    new google.maps.InfoWindow({
+                      content: `<h4><%= river.mapMarkers[i].title %></h4>
+                                  <strong><%=river.mapMarkers[i].title%></strong>
+                                 <p><%=river.mapMarkers[i].description%></p>
+                                 <small>
+                                <form class="delete-form" action="/rivers/<%=river._id%>/mapMarkers/<%=river.mapMarkers[i]._id%>?_method=DELETE" method="POST">
+                                    <input type="submit" class="btn btn-xs btn-danger" value="Delete">
+                                </form>
+                                 </small>`
+                    }).open(map, this);
+                });
+
+            <% } %>
+            
+           google.maps.event.addListener(map,'dblclick', function(event) {
+               map.setCenter(event.latLng);
+               let currentLat = event.latLng.lat();
+               let currentLng = event.latLng.lng();
+            //   console.log(event.latLng.lat());
+
+                let marker = new google.maps.Marker({
+                  position: event.latLng, 
+                  map: map, 
+                  title: event.latLng.lat()+', '+event.latLng.lng()
+                });
+                let infowindow = new google.maps.InfoWindow({
+                    content: `<h3>Add New Marker</h3>
+                                <form action="/rivers/${riverID}/mapMarkers" method="POST">
+                                  <div class="form-group">
+                                    <select class="form-control" name="markerData[type]">
+                                    <option>Fishing Spot</option>
+                                    <option>Parking</option>
+                                    <option>Camping</option>
+                                    <option>Other Note</option>
+                                    </select>
+                                  </div>
+                                
+                                  <div class="form-group">
+                                    <input class="form-control" id="marker-title" type="text" name="markerData[title]" placeholder="Title">
+                                  </div>
+                                
+                                  <div class="form-group">
+                                    <textarea class="form-control" rows="5" id="marker-description" name="markerData[description]" placeholder="Description"></textarea>
+                                  </div>
+                                
+                                  <input id="lngLat" name="markerData[lat]" type="hidden" value="${currentLat}">
+                                  <input id="lngLat" name="markerData[lng]" type="hidden" value="${currentLng}">
+                                
+                                  <small>
+                                    <strong>Lat/Lng: </strong> [${Math.floor(currentLat*10000)/10000}, ${Math.floor(currentLng*10000)/10000}]
+                                  </small>
+                
+                                  <div class="form-group">
+                                      <button class="btn btn-lg btn-default btn-block btn-primary">Submit</button>
+                                  </div>
+                                </form>`
+                }).open(map, marker);
+            });
+                
+                //https://stackoverflow.com/questions/15272640/close-all-currently-open-infowindows-in-google-maps-v3
+
+      
+      }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8ZXDtI7HJubhgLEg8cwc2_7N2xSAenvg&callback=initMap"
+    async defer></script>
+    
+    
+    <!-- Notes to myself/plan for the future -->
+<div class="thumbnail">
+                    <div class="container-fluid">
+                        <div class="row" style="padding:10px">
+                            <h4>Map</h4>
+                            <p>Double-click to Add Custom Marker</p>
+                            <hr/>
+                            <p>Semi-Placeholder for now. Future features:</p>
+                            <ul>
+                                <li>Have marker icons update based on marker type (camping/fishing spot/parking)</li>
+                                <li>Better default map positioning/zoom level</li>
+                                <li>Look more into Google Maps API to see what's possible</li>
+                        </div>
+                    </div>
+                </div>
+                </div>
+</div>
+        
+    </div> <!-- panel-body -->
+</div> <!-- panel -->

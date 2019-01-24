@@ -42,23 +42,23 @@ function seedDB(){
                 if(err){console.log(err)} 
                 else {
                     console.log("River created via seedDB()");
-                                                MapMarker.create(
-                                {
-                                        lat: 42.5959,
-    lng: -72.2267,
-    type: "Camping",
-    title: "Bearsden Lean-to",
-    description: "10-minute hike to Bearsden",
-    icon: "parking"
-                                }, function(err, marker){
-                                    if(err){
-                                        console.log(err);
-                                    } else {
-                                        river.mapMarkers.push(marker);
-                                        river.save();
-                                        console.log("Created new map marker");
-                                    }
-                                });
+    //                                             MapMarker.create(
+    //                             {
+    //                                     lat: 42.5959,
+    // lng: -72.2267,
+    // type: "Camping",
+    // title: "Bearsden Lean-to",
+    // description: "10-minute hike to Bearsden",
+    // icon: "parking"
+    //                             }, function(err, marker){
+    //                                 if(err){
+    //                                     console.log(err);
+    //                                 } else {
+    //                                     river.mapMarkers.push(marker);
+    //                                     river.save();
+    //                                     console.log("Created new map marker");
+    //                                 }
+    //                             });
                 }
             });
         });

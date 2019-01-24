@@ -24,13 +24,15 @@ var methodOverride = require("method-override");    //To support HTTP 'put' & 'd
 app.use(methodOverride("_method"));
 
 //Seed database with dummy data for development purposes. Deletes all existing and then repopulates
-var seedDB = require("./seeds");
-seedDB();
+// var seedDB = require("./seeds");
+// seedDB();
 
 
 app.post('/rivers/:id/mapMarkers/', function(req, res){
     River.findById(req.params.id, function(err, currentRiver){
-        if(err){console.log(err)}
+        if(err){
+            console.log(err);
+        }
         else{
             MapMarker.create(req.body.markerData, function(err, marker){
                 if(err){
@@ -45,6 +47,16 @@ app.post('/rivers/:id/mapMarkers/', function(req, res){
     });
 });
 
+// Delete Map Marker Route
+    app.delete("/rivers/:id/mapMarkers/:mapmarker_id", function(req, res){
+        MapMarker.findByIdAndRemove(req.params.mapmarker_id, function(err){
+           if(err){
+               console.log(err);
+           } else {
+               res.redirect("/rivers/" + req.params.id );
+           }
+   });
+    });
 
 app.get('/gmaps', function(req, res){
     res.render('gmapstest');
