@@ -1,6 +1,7 @@
 ===== Massachusetts Fly Fishing Dashboard =====
 
 Displays information on fishing conditions for various rivers:
+
     - Weather conditions & 7-day forecast
     - USGS river flow data
     - Trout stocking schedules (currently Massachusetts-only)
@@ -8,6 +9,7 @@ Displays information on fishing conditions for various rivers:
     - Map of river, customizable for user-added points of interest
 
 Tech Used:
+
     - Mongo & Mongoose
     - Node.js & Express
     - Third Party API's:
@@ -20,6 +22,7 @@ Tech Used:
 
 ===== Future Projects =====
 River Show Route:
+
     - USGS River Conditions: 
         - Headline number: show how it compares to average flow for current day. Note if high/low.
             - Flow this through to Dashboard too: Current flow cf/s, along with "Warning: High/Low" alert
