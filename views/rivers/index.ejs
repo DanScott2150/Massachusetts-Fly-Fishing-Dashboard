@@ -100,10 +100,18 @@
                                         }
                                         
                                         var data = response.getDataTable();
-                                		var lastStocked = data.wg[0].c[0].f;
+                                		
+                                		var lastStocked; 
+                                		if(data.wg[0]){
+                                		    lastStocked = data.wg[0].c[0].f;
+                                		} else {
+                                		    lastStocked = "n/a";
+                                		}
                                 		
                                         //Write date into <td> cell
-                                		document.getElementById("<%=river._id%>-stocked").textContent = lastStocked;
+   
+                                		    document.getElementById("<%=river._id%>-stocked").textContent = lastStocked;
+
 
                                     }
                                 })();

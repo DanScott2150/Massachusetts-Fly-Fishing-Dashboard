@@ -13,10 +13,16 @@
 
     <div class="panel-body">
         <div class="container-fluid">
+            <% if(usgsData){ %>
+            
             <div class="row">
+
                 <div class="col-md-5" style="padding-left:0px; padding-right:0px">
+
                     <h2 style="margin-top:10px; text-align: center;">
                         Current River Flow<br/>
+
+                        
                         <small><%= usgsData.value.timeSeries[0].sourceInfo.siteName %></small>
                     </h2>
                 
@@ -56,6 +62,16 @@
                     <img src="http://waterdata.usgs.gov/nwisweb/graph?site_no=<%=river.usgsID%>&parm_cd=00060" style="margin:0 auto;"/> 
                 </div>
             </div>
+            
+            <% } else { %>
+            
+                <div class="row">
+                    <div class="col">
+                        <h3>USGS River Data not available for this location</h3>
+                    </div>
+                </div>
+                
+            <% } %>
         </div> <!-- container -->
     </div> <!-- panel-body -->
     

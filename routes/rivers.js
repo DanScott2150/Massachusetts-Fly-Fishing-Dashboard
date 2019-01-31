@@ -13,21 +13,39 @@ var express     = require("express"),
     
 // RIVER CREATE ROUTE
     router.post("/", function(req, res){
-        var name = req.body.name,
-            lat = req.body.lat,
-            lng = req.body.lng,
-            location = req.body.location,
-            description = req.body.description,
-            usgs = req.body.usgs;
-    
-        var newRiver = {
-                name:name, 
-                location:location, 
-                lat:lat, 
-                lng:lng, 
-                usgsID:usgs, 
-                description: description
-            };
+        var newRiver = {};
+        
+        if(req.body.name){
+            newRiver.name = req.body.name;
+        } else {
+            req.flash('error', "River Name Required");
+            return res.redirect('back');
+        }
+        
+        if(req.body.lat && req.body.lng){
+            newRiver.lat = req.body.lat;
+            newRiver.lng = req.body.lng;
+        } else {
+            req.flash('error', "Latitude & Longitude Required");
+            return res.redirect('back');
+        }
+        
+        if(req.body.usgs){
+            newRiver.usgsID = req.body.usgs;
+        } else {
+            newRiver.usgsID = null;
+        }
+        
+        newRiver.location = req.body.location;
+        console.log(newRiver);
+
+        // var newRiver = {
+        //         name:name, 
+        //         location:location, 
+        //         lat:lat, 
+        //         lng:lng, 
+        //         usgsID:usgs
+        //     };
 
         River.create(newRiver, function(err, newlyCreated){
             if(err){console.log(err)} 

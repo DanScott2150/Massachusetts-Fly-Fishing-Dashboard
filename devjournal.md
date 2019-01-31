@@ -1,3 +1,29 @@
+*** 1.30 ***
+Big update
+
+Map functionality:
+        - MAJOR SUCCESS! Finally figured out how to pull the trout stocking geojson data into the map view. Now, on the "Add River"
+        page, the rivers that are actively stocked with trout by the Mass DFW are highlighted. Spent the past week or so trying
+        to figure this out and was just spinning my wheels. The problem has to do with map projections >> the geojson data I found
+        from the Mass DFW had the coordinates listed as EPSG 26986 format, which didn't translate into lat/lng coordinates that were
+        readable by google? Found an npm program 'mapshaper' that converts geojson coordinates... took a lot of trial and error (and 
+        cursewords) but finally figured it out. Relevant links in case I need to re-visit this:
+                - https://www.mass.gov/service-details/massgis-data-layers
+                - https://github.com/mbloch/mapshaper/wiki/Command-Reference#-o-output
+                - https://github.com/mbloch/mapshaper/issues/194
+                - http://spatialreference.org/ref/epsg/nad83-massachusetts-mainland/proj4/
+        
+        - Also succesful at adding in USGS stations as a data layer. On the "Add River" page, the map also shows triangle icons
+        representing USGS data points. User can click on a triangle to auto-populate the USGS Station ID in the form.
+        
+Data validation & graceful degradation:
+        - Added 'connect-flash' package, to show error messages to user when needed.
+        - "Add New River" form checks data when submitted:
+                - River name, lat & long are required. Throws error if not provided
+                - USGS ID & location are optional, okay if not provided
+        - On Dashboard: No longer crashes if a River doesn't have a USGS ID or stocking data associated with it. Displays 'n/a' instead
+        - On River Show Route: Same as above. Displays "USGS River Data not available for this location" if USGS ID is null
+
 *** 1.24 ***
 Maps functionality:
         - Switched maps back to Google Maps API. The look & feel is a lot cleaner, and the coding seems a lot more hassle-free

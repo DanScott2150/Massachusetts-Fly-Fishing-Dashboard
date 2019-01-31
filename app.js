@@ -2,7 +2,10 @@ require('dotenv').config(); //API keys for DarkSky and Google Sheets(Sheets API 
 var express     = require('express'),
     app         = express(),
     mongoose    = require("mongoose"),
-    bodyParser  = require('body-parser');
+    bodyParser  = require('body-parser'),
+    flash       = require('connect-flash'),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session');
 
 //Schema Models
 var River       = require("./models/river"),
@@ -24,9 +27,18 @@ var methodOverride = require("method-override");    //To support HTTP 'put' & 'd
 app.use(methodOverride("_method"));
 
 //Seed database with dummy data for development purposes. Deletes all existing and then repopulates
-// var seedDB = require("./seeds");
-// seedDB();
+var seedDB = require("./seeds");
+seedDB();
 
+// Flash configuration
+app.use(cookieParser('let the cowboys ride against the wind'));
+app.use(session({cookie: { maxAge: 60000 }}));
+app.use(flash());
+app.use(function(req, res, next){
+    res.locals.error = req.flash("error");
+    res.locals.success = req.flash("success");
+    next();
+});
 
 app.post('/rivers/:id/mapMarkers/', function(req, res){
     River.findById(req.params.id, function(err, currentRiver){

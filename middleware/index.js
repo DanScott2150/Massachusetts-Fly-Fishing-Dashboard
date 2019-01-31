@@ -40,10 +40,15 @@ middlewareObj.dashboardUSGS = function(req, res, next){
     rivers.then(
         async function(rivers){
             for (let river of rivers){
-                //For each River, add a key/value pair to the usgsObj{}
                 let riverName = river.name;
-                usgsObj[riverName] = null;
-                usgsObj[riverName] = await getUSGS(river);
+                if(river.usgsID){
+                    //For each River, add a key/value pair to the usgsObj{}
+
+                    usgsObj[riverName] = null;
+                    usgsObj[riverName] = await getUSGS(river);
+                } else {
+                    usgsObj[riverName] = "n/a";
+                }
             }
             
             //Once the for-of loop is complete for all Rivers, store the usgsObj{} in res.locals to pass it thru to the route
@@ -164,12 +169,17 @@ middlewareObj.usgsData = function(req, res, next){
     //Lookup current river, return the associated USGS ID number
     var findCurrentID = () => 
         River.findById(req.params.id, 'usgsID', function(err, foundRiver){
-            if(err){console.log(err); next();}
+            if(err){
+                console.log(err); 
+                next();
+            }
             else {
                 //Since this requires a call to the database, need to use Promises to deal with async issues
                 return new Promise((resolve, reject) => {
                     if(foundRiver){
                         resolve(foundRiver);
+                    } else {
+                        reject();
                     }
                 });
             }
@@ -183,6 +193,8 @@ middlewareObj.usgsData = function(req, res, next){
     }).then((response) => {
         var fullData = response.data;
         res.locals.usgsData = fullData;
+        next();
+    }).catch(() => {
         next();
     });
 };

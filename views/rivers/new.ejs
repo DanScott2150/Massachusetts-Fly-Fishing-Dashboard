@@ -27,13 +27,10 @@
                         <input class="form-control" id="river-lng" type="text" name="lng" placeholder="longitude">
                     </div>
                     <div class="form-group">
-                        <input class="form-control" id= type="text" name="location" placeholder="location">
+                        <input class="form-control" id="river-location" type="text" name="location" placeholder="location">
                     </div>
                     <div class="form-group">
-                        <input class="form-control" type="text" name="description" placeholder="description">
-                    </div>
-                    <div class="form-group">
-                        <input class="form-control" type="text" name="usgs" value="01175500"><!-- temp placeholder value -->
+                        <input class="form-control" id="river-usgs" type="text" name="usgs" placeholder="USGS Station ID"><!-- temp placeholder value -->
                     </div>
                     <div class="form-group">
                         <button class="btn btn-lg btn-default btn-block btn-primary">Submit</button>
@@ -45,45 +42,115 @@
         <div class="col-md-9">
         
             <div class="thumbnail" id="map" style="width:100%; height:400px; margin: 0 auto"></div>
-            <script type="text/javascript" src="../js/mapbox-add.js"></script>
-
-
-<!--
-Goal: Update so that new entries will be valid for all API calls
-Current limitation: restrict to only Mass Rivers [due to trout stocking info]
-
-Ideally: Map view, click on map to select river.
-- Auto-gens Name, Location, and finds nearest USGS dada point
-
---MapBox API:
-1) User clicks point on map
-    a) If point has a 'waterbody-label' associated with it, auto-fill form with River Name & Lat/Lng
-    b) If not, but 'waterbody' in area, zoom in (thus showing more labels). Repeat until 1a satisfied
-    c) If no waterbody in area, alert user of error
-2) Return name of River and Lat/Lng
-3) Stocking reports: Checkbox list of all stocking points associated with that river.
-    User selects as many as they want included
-4) Town: Auto-fill based on Google geocode
-5) USGS Station: Populate list of options, user picks.
-
-Aim to have each field auto-complete
-
--->
-        
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8ZXDtI7HJubhgLEg8cwc2_7N2xSAenvg&callback=initMap"
+    async defer></script>
     
-<h3>1)Select River on Map Above to auto-generate River name, Latitude, Longitude</h3>
-    <p>For now: if a click doesn't register, zoom in until the river's name is visible on the map and click on that.</p>
-    <p>Will iron out this functionality better later.</p>
+    <script>
+           
+    var map;
+    
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat:42.4072, lng: -72.0000},
+            zoom: 8,
+            disableDoubleClickZoom: true,
+            mapTypeId: "terrain"
+        });
+        
+        map.data.loadGeoJson('../js/massTroutNew.json');
+        map.data.setStyle({
+          fillColor: 'blue',
+          strokeWeight: 1
+        });
+        
+        var usgsLayer = new google.maps.KmlLayer({
+          url: 'https://waterservices.usgs.gov/nwis/site/?format=ge&stateCd=ma&period=P52W&parameterCd=00060&siteStatus=active&hasDataTypeCd=iv,dv',
+          map: map
+        });
+        
+        usgsLayer.addListener('click', function(usgsClick) {
+            let usgsID = usgsClick.featureData.id;
+            updateUsgs(usgsID);
+        // console.log(usgsClick);
+        });
 
-<h3>2)Check if trout stocking reports are available</h3>
-    <em>Coming Soon</em>
-    <button>Check for Data</button> ===> <em>example output: Massachusetts stocks this river at the following points: [town name, town name, etc]</em>
 
-<h3>3)Lookup nearest USGS station for river flow data</h3>
-    <em>Coming soon</em>
-    <p>For now, 'add river' form auto-populated with 01175500, which is for the Swift</p>
 
-<p>asdf</p>
+        map.data.addListener('click', function(event){
+            console.log(event);
+            console.log(event.feature.getProperty('mdfw_name'));
+            let clickInfo = {
+                riverName: event.feature.getProperty('mdfw_name'),
+                riverLocation: event.feature.getProperty('TOWN'),
+                riverLat: event.latLng.lat(),
+                riverLng: event.latLng.lng()
+            }
+            updateForm(clickInfo);
+
+        });
+
+        
+        var geocoder = new google.maps.Geocoder;
+        
+            map.addListener('click', function(e){
+                let clickInfo = {
+                    riverLat: e.latLng.lat(),
+                    riverLng: e.latLng.lng()             
+                }
+
+                updateForm(clickInfo);
+               
+              geocoder.geocode({'location': {lat: e.latLng.lat(), lng: e.latLng.lng()}}, function(results, status) {
+                console.log("success");
+                console.log(status);
+                console.log(results);
+              });
+            });
+    
+    function updateUsgs(usgsID){
+        document.querySelector("#river-usgs").value = usgsID;
+    }
+
+
+    function updateForm(clickInfo){
+        if(clickInfo.riverName){
+            document.querySelector("#river-name").value = clickInfo.riverName;            
+        } else { document.querySelector("#river-name").value = "" }
+        
+        if(clickInfo.riverLocation){
+            document.querySelector("#river-location").value = clickInfo.riverLocation;
+        } else { document.querySelector("#river-location").value = "" }
+        
+        if(clickInfo.riverLat){
+            document.querySelector("#river-lat").value = clickInfo.riverLat;
+        } else { document.querySelector("#river-lat").value = "" }
+
+        if(clickInfo.riverLng){
+            document.querySelector("#river-lng").value = clickInfo.riverLng;
+        } else { document.querySelector("#river-lng").value = "" }
+    }
+    
+    }
+    
+    </script>
+
+<h2>Interactive River Map</h2>
+<p>Please allow up to 5-10 seconds for all data to load (todo: speed up loading).</p>
+<p>Black/Blue lines represent trout-stocked waters. Clicking one of these will auto-populate
+    the "Add New River" form with the river name, map coordinates, and location.</p>
+<p>Triangles represent USGS data stations. Clicking one of these will auto-populate the 
+river's USGS ID# in the form.</p>
+<p>Clicking elsewhere on the map will auto-populate the form with just the map coordinates.</p>
+
+<hr/>
+<ul>
+    Future To-do's:
+    <li>Speed up loading of trout-stocking data layer. Maybe split out trout stocking & USGS stations into toggle-able layers</li>
+    <li>Better map styling</li>
+    <li>other stuff...</li>
+</ul>
+
+
         <a href="/rivers">Back to Rivers Page</a>
     
 </div>
