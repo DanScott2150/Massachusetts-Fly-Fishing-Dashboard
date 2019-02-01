@@ -19,7 +19,7 @@ var indexRoutes     = require('./routes/index'),
     journalRoutes   = require('./routes/journals');
 
 //App initialization
-mongoose.connect("mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));

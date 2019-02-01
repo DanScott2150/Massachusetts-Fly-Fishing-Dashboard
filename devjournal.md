@@ -1,3 +1,8 @@
+*** 2.01 ***
+Minor tweaks to add & edit routes.
+Added some mapmarkers & journal entries to each river
+Think I'm ready to deploy to heroku as v1.0
+
 *** 1.30 ***
 Big update
 
