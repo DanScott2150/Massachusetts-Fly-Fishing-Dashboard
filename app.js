@@ -27,8 +27,8 @@ var methodOverride = require("method-override");    //To support HTTP 'put' & 'd
 app.use(methodOverride("_method"));
 
 //Seed database with dummy data for development purposes. Deletes all existing and then repopulates
-var seedDB = require("./seeds");
-seedDB();
+// var seedDB = require("./seeds");
+// seedDB();
 
 // Flash configuration
 app.use(cookieParser('let the cowboys ride against the wind'));

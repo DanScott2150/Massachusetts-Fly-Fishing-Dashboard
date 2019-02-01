@@ -12,44 +12,136 @@
         </div>
         
         <div class="col-md-3" id="sidebar-sticky">
+            
+            <p class="lead">Edit River Info</p>
         
             <form action="/rivers/<%= river._id %>?_method=PUT" method="POST">
                 <div class="form-group">
-                    <label for="river-name">Name</label>
                     <input class="form-control" id="river-name" type="text" name="river[name]" value="<%=river.name%>">
                 </div>
                 <div class="form-group">
-                    <label for="river-lat">Lat:</label>
                     <input class="form-control" id="river-lat" type="text" name="river[lat]" value="<%=river.lat%>">
                 </div>
                 <div class="form-group">
-                    <label for="river-lng">Lng:</label>
                     <input class="form-control" id="river-lng" type="text" name="river[lng]" value="<%=river.lng%>">
                 </div>
                 <div class="form-group">
-                    <label for="river-location">Location:</label>
                     <input class="form-control" id="river-location" type="text" name="river[location]" value="<%=river.location%>">
                 </div>
                 <div class="form-group">
-                    <label for="river-usgs">USGS Site Number:</label>
                     <input class="form-control" id="river-usgs" type="text" name="river[usgsID]" value="<%=river.usgsID%>">
-                    <small class="form-text text-muted">
-                        <a href="https://maps.waterdata.usgs.gov/mapper/">USGS Site Number Lookup</a>
-                    </small>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-lg btn-default btn-block btn-primary">Submit</button>
+                    <button class="btn btn-lg btn-default btn-block btn-primary">Save Updates</button>
                 </div>
+
             </form>
-            
+<hr/>
+
+            <a style="width:100%" class="btn btn-warning" href="/rivers/<%=river._id%>">Cancel</a><br/><br/>
+                            <form class="delete-form" action="/rivers/<%= river._id%>?_method=DELETE" method="POST">
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
          </div> <!-- col-md-3 sidebar-sticky -->
         
         <div class="col-md-9">
         
             <div class="thumbnail" id="map" style="width:100%; height:400px; margin: 0 auto"></div>
-            <!--<script type="text/javascript" src="../js/mapbox-add.js"></script>-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8ZXDtI7HJubhgLEg8cwc2_7N2xSAenvg&callback=initMap"
+    async defer></script>
+    
+    <script>
+           
+    var map;
+    
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat:42.4072, lng: -72.0000},
+            zoom: 8,
+            disableDoubleClickZoom: true,
+            mapTypeId: "terrain"
+        });
+        
+        // map.data.loadGeoJson('../js/massTroutNew.json');
+        // map.data.setStyle({
+        //   fillColor: 'blue',
+        //   strokeWeight: 1
+        // });
+        
+        var usgsLayer = new google.maps.KmlLayer({
+          url: 'https://waterservices.usgs.gov/nwis/site/?format=ge&stateCd=ma&period=P52W&parameterCd=00060&siteStatus=active&hasDataTypeCd=iv,dv',
+          map: map
+        });
+        
+        usgsLayer.addListener('click', function(usgsClick) {
+            let usgsID = usgsClick.featureData.id;
+            updateUsgs(usgsID);
+        // console.log(usgsClick);
+        });
+
+
+
+        map.data.addListener('click', function(event){
+            console.log(event);
+            console.log(event.feature.getProperty('mdfw_name'));
+            let clickInfo = {
+                riverName: event.feature.getProperty('mdfw_name'),
+                riverLocation: event.feature.getProperty('TOWN'),
+                riverLat: event.latLng.lat(),
+                riverLng: event.latLng.lng()
+            }
+            updateForm(clickInfo);
+
+        });
+
+        
+        var geocoder = new google.maps.Geocoder;
+        
+            map.addListener('click', function(e){
+                let clickInfo = {
+                    riverLat: e.latLng.lat(),
+                    riverLng: e.latLng.lng()             
+                }
+
+                updateForm(clickInfo);
+               
+              geocoder.geocode({'location': {lat: e.latLng.lat(), lng: e.latLng.lng()}}, function(results, status) {
+                console.log("success");
+                console.log(status);
+                console.log(results);
+              });
+            });
+    
+    function updateUsgs(usgsID){
+        document.querySelector("#river-usgs").value = usgsID;
+    }
+
+
+    function updateForm(clickInfo){
+        // if(clickInfo.riverName){
+        //     document.querySelector("#river-name").value = clickInfo.riverName;            
+        // } else { document.querySelector("#river-name").value = "" }
+        
+        // if(clickInfo.riverLocation){
+        //     document.querySelector("#river-location").value = clickInfo.riverLocation;
+        // } else { document.querySelector("#river-location").value = "" }
+        
+        if(clickInfo.riverLat){
+            document.querySelector("#river-lat").value = clickInfo.riverLat;
+        } else { document.querySelector("#river-lat").value = "" }
+
+        if(clickInfo.riverLng){
+            document.querySelector("#river-lng").value = clickInfo.riverLng;
+        } else { document.querySelector("#river-lng").value = "" }
+    }
+    
+    }
+    
+    </script>
+    
             <p>Click point on map to auto-fill Latitude & Longitude</p>
             <p><a href="/">Back to Rivers Page</a></p>
+            <br/><br/><br/>
         </div>
     </div>
 </div>
