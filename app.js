@@ -19,7 +19,13 @@ var indexRoutes     = require('./routes/index'),
     journalRoutes   = require('./routes/journals');
 
 //App initialization
+
+const mLabUser = process.env.MLABUSERNAME;
+const mLabPass = process.env.MLABPASSWORD;
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
+mongoose.connect(`mongodb://${mLabUser}:${mLabPass}@ds243084.mlab.com:43084/heroku_cwsm6tgg`);
+
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static(__dirname + "/public"));

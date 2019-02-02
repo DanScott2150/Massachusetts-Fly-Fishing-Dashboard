@@ -26,12 +26,14 @@ Rivers can be added, edited, or deleted by the user. The 'Add River' page displa
         - USGS.gov
         - Google Maps
         - Google Sheets
+    - AWS Cloud9 IDE
 
 
 ## Future Projects/Ideas:
 
     - Implement code testing
     - User accounts/authentication
+    - 'loading' spinner for 
 
     - USGS River Conditions: 
         - Headline number: show how it compares to average flow for current day. Note if high/low.

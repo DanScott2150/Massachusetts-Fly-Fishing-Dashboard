@@ -1,7 +1,10 @@
 *** 2.01 ***
-Minor tweaks to add & edit routes.
-Added some mapmarkers & journal entries to each river
-Think I'm ready to deploy to heroku as v1.0
+Minor tweaks to add & edit routes. Looking at deploying current version to Heroku
+Added minor changes to app.js so that server launches on heroku port, and mongoose connects to mlab database.
+
+Deployed, however getting 403 forbidden error when trying to add/edit Rivers. Think that currently I'm just connecting
+to the mlab database, but not actually passing user credentials in. Will resolve tomorrow.
+
 
 *** 1.30 ***
 Big update
