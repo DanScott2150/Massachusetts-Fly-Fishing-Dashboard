@@ -27,6 +27,7 @@ Rivers can be added, edited, or deleted by the user. The 'Add River' page displa
         - Google Maps
         - Google Sheets
     - AWS Cloud9 IDE
+    - Heroku
 
 
 ## Future Projects/Ideas:
