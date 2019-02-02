@@ -153,6 +153,6 @@ app.use("/rivers/:id/journals", journalRoutes);   //Currently empty
 app.use("/rivers", riverRoutes);
 
 //Launch server
-app.listen(process.env.PORT, process.env.IP, function(){
+app.listen(process.env.PORT, function(){
     console.log("Server Has Launched");
 });
