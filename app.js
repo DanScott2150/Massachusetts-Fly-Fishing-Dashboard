@@ -36,8 +36,9 @@ var options = {
       "connectTimeoutMS" : 30000
     }
   }
-}
+};
 
+mongoose.connect(process.env.MONGODB_URI);
 mongoose.connect(uri, options);
 
 // const mLabUser = process.env.MLABUSERNAME;
