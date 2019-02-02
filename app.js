@@ -23,7 +23,7 @@ var indexRoutes     = require('./routes/index'),
 // const mLabUser = process.env.MLABUSERNAME;
 // const mLabPass = process.env.MLABPASSWORD;
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
-// mongoose.connect(`mongodb://dan:EDir38m@ds243084.mlab.com:43084/heroku_cwsm6tgg`);
+mongoose.connect(`mongodb://dan:EDir38m@ds011765.mlab.com:11765/heroku_g6bs3c1w`);
 
 
 app.use(bodyParser.urlencoded({extended: true}));
