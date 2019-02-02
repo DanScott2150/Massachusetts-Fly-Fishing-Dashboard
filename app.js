@@ -20,10 +20,30 @@ var indexRoutes     = require('./routes/index'),
 
 //App initialization
 
+
+var uri = 'mongodb://dan:EDir38m@ds011765.mlab.com:11765/heroku_g6bs3c1w';
+
+var options = {
+  "server" : {
+    "socketOptions" : {
+      "keepAlive" : 300000,
+      "connectTimeoutMS" : 30000
+    }
+  },
+  "replset" : {
+    "socketOptions" : {
+      "keepAlive" : 300000,
+      "connectTimeoutMS" : 30000
+    }
+  }
+}
+
+mongoose.connect(uri, options);
+
 // const mLabUser = process.env.MLABUSERNAME;
 // const mLabPass = process.env.MLABPASSWORD;
 // mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost:27017/fishapp", { useNewUrlParser: true });
-mongoose.connect(`mongodb://dan:EDir38m@ds011765.mlab.com:11765/heroku_g6bs3c1w`);
+// mongoose.connect(`mongodb://dan:EDir38m@ds011765.mlab.com:11765/heroku_g6bs3c1w`);
 
 
 app.use(bodyParser.urlencoded({extended: true}));
