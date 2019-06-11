@@ -14,65 +14,71 @@
     bookmark to revisit later.
 */
 
-require('dotenv').config();     //API keys held via environment variables
+// require('dotenv').config();     //API keys held via environment variables
 
-var axios = require("axios"),
-    River = require("../models/river"),
-    darkSkyKey = process.env.DARKSKYAPIKEY,
-    dashboardObj = {},          //Holds weather data that gets passed to Dashboard route
-    usgsObj = {},               //Holds USGS data that gets passed to Dashboard route
-    middlewareObj = {};         //Object to hold middleware functions, gets exported via module.exports
+const axios = require("axios"),
+      River = require("../models/river"),
+      darkSkyKey = process.env.DARKSKYAPIKEY,
+      dashboardObj = {},          //Holds weather data that gets passed to Dashboard route
+      usgsObj = {},               //Holds USGS data that gets passed to Dashboard route
+      middlewareObj = {};         //Object to hold middleware functions, gets exported via module.exports
 
 
 //Generate USGS River flow data, gets passed to root dashboard
 middlewareObj.dashboardUSGS = function(req, res, next){
-    //Lookup all Rivers
-    const rivers = River.find({}, function(err, rivers){
-        if(err){console.log(err)}
-        else {
-            return new Promise((resolve, reject) => {
-                if(rivers){resolve(rivers);}
-            });
+
+  //1) Query MongoDB for all Rivers, return as a promise
+  const rivers = River.find({}, function(err, rivers){
+    if(err){
+      console.log(err)
+    }
+    else {
+      return new Promise((resolve, reject) => {
+        if(rivers){
+          resolve(rivers);
         }
-    });
+      });
+    }
+  });
 
-    //Once all Rivers are returned, loop through each and run getUSGS()
-    rivers.then(
-        async function(rivers){
-            for (let river of rivers){
-                let riverName = river.name;
-                if(river.usgsID){
-                    //For each River, add a key/value pair to the usgsObj{}
+  // 2) For each river, run getUSGS() function, which executes the API call
+  rivers.then(
+    async function(rivers){
+      for (let river of rivers){
+        let riverName = river.name;
+        if(river.usgsID){
+          usgsObj[riverName] = null;
+          usgsObj[riverName] = await getUSGS(river);
+        } else {
+          usgsObj[riverName] = "n/a";
+        }
+      }
 
-                    usgsObj[riverName] = null;
-                    usgsObj[riverName] = await getUSGS(river);
-                } else {
-                    usgsObj[riverName] = "n/a";
-                }
-            }
-            
-            //Once the for-of loop is complete for all Rivers, store the usgsObj{} in res.locals to pass it thru to the route
-            res.locals.usgsDashboard = usgsObj;
-            next();
-    });
+    // 3) Once the for-of loop is complete, store usgsObj{} into res.locals so it can can be accessed
+
+        res.locals.usgsDashboard = usgsObj;
+        next();
+    }
+  );
 };
 
 //Function for API call to USGS
 async function getUSGS(river){
-    let currentID = river.usgsID;   //Each River has a USGS ID# associated with it, stored in DB
+  let currentID = river.usgsID;   //Each River has a USGS ID# associated with it, stored in DB
     
-    /*  USGS API does not require an API key
-        Parameter Codes (parameterCd) of 00060 & 00065 represent flow rate(cfs) and water gage height.
-        Reference: https://waterservices.usgs.gov/rest/IV-Service.html
-    */
+  /*  USGS API does not require an API key
+      Parameter Codes (parameterCd) of 00060 & 00065 represent flow rate(cfs) and water gage height.
+      Reference: https://waterservices.usgs.gov/rest/IV-Service.html
+  */
     
-    var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
+  var usgsURL = `http://waterservices.usgs.gov/nwis/iv/?format=json&site=${currentID}&parameterCd=00060,00065`;
     
-    return axios.get(usgsURL)
-        .then((response) => {
-            let flowRate = response.data.value.timeSeries[0].values[0].value[0].value;
-            return flowRate;
-        });
+  return axios.get(usgsURL)
+    .then((response) => {
+      let flowRate = response.data.value.timeSeries[0].values[0].value[0].value;
+      return flowRate;
+    }
+  );
 }
 
 //Generate weather data for root dashboard
@@ -164,26 +170,26 @@ middlewareObj.findWeather = function(req, res, next){
 
 //Generate USGS flow data for single River (rivers/show route)
 middlewareObj.usgsData = function(req, res, next){
-    var currentID;
+  var currentID;
     
-    //Lookup current river, return the associated USGS ID number
-    var findCurrentID = () => 
-        River.findById(req.params.id, 'usgsID', function(err, foundRiver){
-            if(err){
-                console.log(err); 
-                next();
-            }
-            else {
-                //Since this requires a call to the database, need to use Promises to deal with async issues
-                return new Promise((resolve, reject) => {
-                    if(foundRiver){
-                        resolve(foundRiver);
-                    } else {
-                        reject();
-                    }
-                });
-            }
+  //Lookup current river, return the associated USGS ID number
+  var findCurrentID = () => 
+    River.findById(req.params.id, 'usgsID', function(err, foundRiver){
+      if(err){
+          console.log(err); 
+          next();
+      }
+      else {
+        //Since this requires a call to the database, need to use Promises to deal with async issues
+        return new Promise((resolve, reject) => {
+          if(foundRiver){
+            resolve(foundRiver);
+          } else {
+            reject();
+          }
         });
+      }
+      });
 
     //Make API call to USGS. No API key required
     findCurrentID().then((response) => {

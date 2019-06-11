@@ -76,3 +76,8 @@ body{
    /*pointer-events: none;*/
    cursor: not-allowed;
 }
+
+    footer{
+        background-color: #f8f8f8;
+    border-color: #e7e7e7;
+    }

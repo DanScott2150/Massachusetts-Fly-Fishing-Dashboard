@@ -1,105 +1,105 @@
 <!--clear-day, clear-night, rain, snow, sleet, wind, fog, cloudy, partly-cloudy-day, or partly-cloudy-night--> 
 <div class="panel panel-info"  id="weather">
-    <div class="panel-heading">
-        <h2 class="panel-title">Weather</h3>
-    </div>
+  <div class="panel-heading">
+    <h2 class="panel-title">Weather</h3>
+  </div>
 
-    <div class="panel-body">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6" style="padding-left:0px; padding-right:0px">
-                    <h2 style="margin-top:10px; text-align: center;">Current Weather<br/>
-                    <small><%=river.location%></small></h2>
-                
-                    <!-- Display weather icon SVG -->
-                    <!-- 'icon' is a datapoint returned from the darksky API call -->
-                    <div class="currentWeather">
-                        <svg width="150px" height="150px">
-                            <use xlink:href="#<%=weather.currently.icon%>" />
-                        </svg>
+  <div class="panel-body">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-md-6" style="padding-left:0px; padding-right:0px">
+          
+          <h2 style="margin-top:10px; text-align: center;">Current Weather<br/>
+            <small><%=river.location%></small></h2>
+        
+            <!-- Display weather icon SVG -->
+            <!-- 'icon' is a datapoint returned from the darksky API call -->
+            <!-- Actual icons are an SVG library 'Climacons', held in ./partials/svgs.ejs -->
+            <div class="currentWeather">
+              <svg width="150px" height="150px">
+                <use xlink:href="#<%=weather.currently.icon%>" />
+              </svg>
 
-                        <p style="margin-top:10px;">
-                            <strong>Current Temperature: </strong><%= Math.round(weather.currently.temperature) %>&#176F<br/>
-                            <small>Feels like: <%= Math.round(weather.currently.apparentTemperature) %>&#176F</small><br/>
-                        </p>
-                        
-                        <p>
-                            <%= weather.currently.summary %>. 
-                            <%= weather.hourly.summary %>
-                        </p>
+              <p style="margin-top:10px;">
+                <strong>Current Temperature: </strong><%= Math.round(weather.currently.temperature) %>&#176F<br/>
+                <small>Feels like: <%= Math.round(weather.currently.apparentTemperature) %>&#176F</small><br/>
+              </p>
                 
-                        <p>
-                            Wind: <%= Math.round(weather.currently.windSpeed) %> MPH with gusts to <%= Math.round(weather.currently.windGust) %> MPH
-                        </p>
+              <p>
+                <%= weather.currently.summary %>. 
+                <%= weather.hourly.summary %>
+              </p>
+        
+              <p>
+                Wind: <%= Math.round(weather.currently.windSpeed) %> MPH with gusts to <%= Math.round(weather.currently.windGust) %> MPH
+              </p>
+        
+              <div style="margin-bottom:10px;">
+                <div style="width:50%; padding-right: 10px; text-align:right; float:left; border-right:2px solid gray">
+                  <strong>High: </strong><%= Math.round(weather.daily.data[0].temperatureHigh) %>&#176F
+                </div>
+                <div style="width:50%; padding-left: 10px; text-align:left; float:right;">
+                  <strong>Low: </strong><%= Math.round(weather.daily.data[0].temperatureLow) %>&#176F
+                </div>
+              </div>
                 
-                        <div style-"margin-bottom:10px;">
-                            <div style="width:50%; padding-right: 10px; text-align:right; float:left; border-right:2px solid gray">
-                                <strong>High: </strong><%= Math.round(weather.daily.data[0].temperatureHigh) %>&#176F
-                            </div>
-                            <div style="width:50%; padding-left: 10px; text-align:left; float:right;">
-                                <strong>Low: </strong><%= Math.round(weather.daily.data[0].temperatureLow) %>&#176F
-                            </div>
-                        </div>
-                        
-                        <div style="clear:both; height:10px;"></div>
-                        
-                        <div style="">
-                            <div style="width:50%; padding-right: 10px; text-align:right; float:left; border-right:2px solid gray">
-                                <strong>Sunrise: </strong>
-                                <%= new Date(weather.daily.data[0].sunriseTime * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %>
-                            </div>
-                            <div style="width:50%; padding-left: 10px; text-align:left; float:right;">
-                                <strong>Sunset: </strong>
-                                <%= new Date(weather.daily.data[0].sunsetTime * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %>
-                            </div>
-                        </div>
+              <div style="clear:both; height:10px;"></div>
+                
+              <div>
+                <div style="width:50%; padding-right: 10px; text-align:right; float:left; border-right:2px solid gray">
+                  <strong>Sunrise: </strong>
+                  <%= new Date(weather.daily.data[0].sunriseTime * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %>
+                </div>
+                <div style="width:50%; padding-left: 10px; text-align:left; float:right;">
+                  <strong>Sunset: </strong>
+                  <%= new Date(weather.daily.data[0].sunsetTime * 1000).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}); %>
+                </div>
+              </div>
 
-                <!-- TODO: Sunrise/Sunset times are wrong. Originally made a manual quickfix to adjust for daylight savings time,
-                but now it's off by a lot more than an hour. Need to revisit sometime. -->
-
-                    </div> <!-- .currentweather -->
-                </div> <!-- col-md-6-->
-            
-                <div class="col-md-6">
-                    <ul class="list-unstyled list-group bg-warning" style="margin-bottom:0px; border:1px solid #ddd; border-radius: 4px; padding:10px 15px;">
-                        <% for(var i=1; i<=7; i++) {%>
-                        <% /* Begin var i at 1 weather.daily.data[0] is current day, and we want to begin with tomorrow */ %>
-                            <li class="list-group-item" style="background: inherit; border: 0; padding:0px;">
-                                <div style="display:inline-block; width: 70%;">
-                                    <p style="margin-bottom:0">
-                                        <!-- Print day name -->
-                                        <% let weekday = new Date(weather.daily.data[i].time * 1000); %>
-                                        <strong><%= weekday.toLocaleDateString([], {weekday: 'long'}); %>: </strong>
-                                        H: <%= Math.round(weather.daily.data[i].temperatureHigh) %>&#176F / L: <%= Math.round(weather.daily.data[i].temperatureLow) %>&#176F
-                                    </p>
-                                    <p style="margin-bottom:0">
-                                        <!-- Print daily summary -->
-                                        <%= weather.daily.data[i].summary %>
-                                    </p>
-                                </div>
-                                
-                                <div style="float: right;">
-                                    <div style="height:40px; width: 40px;">
-                                        <svg width="40px" height="40px">
-                                            <use xlink:href="#<%=weather.daily.data[i].icon%>" />
-                                        </svg>
-                                    </div> <!-- icon -->
-                                </div> <!-- float:right container div -->
-                                
-                                <% if(i < 7){ %>
-                                    <!-- print hr linebreak for all entries except the last -->
-                                    <hr style="margin-top:5px; margin-bottom: 5px;" />
-                                <% } %>
-                            </li>
-                        <% } %> <!-- for loop to print 5-day forecast -->
-                
-                    </ul>
-                </div> <!-- col-md-6 -->
-            </div> <!-- row -->
-        </div> <!-- container-fluid -->
-    </div> <!-- panel-body -->
+            </div> <!-- .currentweather -->
+        </div> <!-- col-md-6-->
+    
+        <div class="col-md-6">
+          <ul class="list-unstyled list-group bg-warning" style="margin-bottom:0px; border:1px solid #ddd; border-radius: 4px; padding:10px 15px;">
+            <% for(var i=1; i<=7; i++) {%>
+            <% /* Begin var i at 1 weather.daily.data[0] is current day, and we want to begin with tomorrow */ %>
+              <li class="list-group-item" style="background: inherit; border: 0; padding:0px;">
+                <div style="display:inline-block; width: 70%;">
+                  <p style="margin-bottom:0">
+                    <!-- Print day name -->
+                    <% let weekday = new Date(weather.daily.data[i].time * 1000); %>
+                    <strong><%= weekday.toLocaleDateString([], {weekday: 'long'}); %>: </strong>
+                    H: <%= Math.round(weather.daily.data[i].temperatureHigh) %>&#176F / L: <%= Math.round(weather.daily.data[i].temperatureLow) %>&#176F
+                  </p>
+                  <p style="margin-bottom:0">
+                    <!-- Print daily summary -->
+                    <%= weather.daily.data[i].summary %>
+                  </p>
+                </div>
+                  
+                <div style="float: right;">
+                  <div style="height:40px; width: 40px;">
+                    <svg width="40px" height="40px">
+                      <use xlink:href="#<%=weather.daily.data[i].icon%>" />
+                    </svg>
+                  </div> <!-- icon -->
+                </div> <!-- float:right container div -->
+                  
+                <% if(i < 7){ %>
+                  <!-- print hr linebreak for all entries except the last -->
+                  <hr style="margin-top:5px; margin-bottom: 5px;" />
+                <% } %>
+              </li>
+            <% } %> <!-- for loop to print 5-day forecast -->
+      
+          </ul>
+        </div> <!-- col-md-6 -->
+      </div> <!-- row -->
+    </div> <!-- container-fluid -->
+  </div> <!-- panel-body -->
     
     <div class="panel-footer text-right">
-        <small><em>Weather Data Powered by DarkSky API</em></small>
+      <!-- DarkSky Attribution required for free API usage -->
+      <small><em>Weather Data Powered by DarkSky API</em></small>
     </div>
 </div>
